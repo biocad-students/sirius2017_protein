@@ -8,7 +8,7 @@ def read(path,name = "test"):
     """
     parser = PDBParser()
     structure = parser.get_structure(name,path)
-    return structure[0]['H']
+    return structure[0]['F']
 
 def write(path,record):
     """
