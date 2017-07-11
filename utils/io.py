@@ -29,3 +29,10 @@ def addDash(s,index):
             index - индекс
     """
     return s[:index] + '-' + s[index:]
+
+def tta(tup,extra = 0):
+    a = [' ']
+    for x in tup:
+        a.append(x)
+    a.append(' ')
+    return a
