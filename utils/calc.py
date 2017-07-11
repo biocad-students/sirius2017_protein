@@ -1,8 +1,9 @@
-from numpy import linalg,multiply
+from numpy import linalg,dot
 from math import sqrt
 from Bio.PDB.Superimposer import *
 from Bio.PDB.Residue import Residue
 from Bio.PDB.Chain import Chain
+from utils.io import tta
 def distance(cordA,cordB):
     """
          Возвращает расстояние между точками в пространстве
@@ -22,9 +23,8 @@ def normalize(v):
         return v
     return v / linalg.norm(v)
 
-#
 
-def imposer(structure1,res11,res12):
+def imposer(_structure1,res11,res12):
     """
         Структурное выравнивание по 2 цепочкам атомов
         Параметры:
@@ -33,31 +33,82 @@ def imposer(structure1,res11,res12):
     """
     first = 10000
     last = 0
-
+    structure1 = _structure1.child_list
+    #structure1 = _structure1.copy()
     for x in structure1:
         first = min(x.id[1],first)
         last = max(x.id[1],last)
-    print(res11,res12,len(structure1))
-    print(first,last)
-    res11.id = structure1.child_list[0].id
-    res12.id = structure1.child_list[last].id
-    structure1.child_list[0] = res11
-    structure1.child_list[last-1] = res12
+
     Nc = structure1[first]['N']
     Cc = structure1[first]['C']
     CAc = structure1[first]['CA']
-    Ncf = res11['N']
-    Ccf = res11['C']
+
+    Ncf =  res11['N']
+    Ccf =  res11['C']
     CAcf = res11['CA']
-    fixed_vectors = [Ncf,Ccf,CAcf]
-    moving_vectors = [Nc,Cc,CAc]
+
+# IMPORTSER MODULE
+    fixed_vectors = [Ncf,CAcf,Ccf]
+    moving_vectors = [Nc,CAc,Cc]
     sup = Superimposer()
     sup.set_atoms(fixed_vectors,moving_vectors)
     for spx in range(first,last):
         for i in structure1[spx]:
-            vecALL = structure1[spx][i.get_name()].get_vector()
-            curcord = vecALL._ar.dot(sup.rotran[0])+sup.rotran[1]
-            #print(vecALL,curcord)
+            v = structure1[spx][i.get_name()].get_vector()
+            curcord = dot(v._ar, sup.rotran[0])+sup.rotran[1]
             structure1[spx][i.get_name()].set_coord(curcord)
-    return structure1
-    #return sup
+# 1 SELECT RES ALIGN
+    _res11 = res11.copy()
+    __res11 = res11.copy()
+    _res11.__init__(structure1[first].id,__res11.resname,__res11.segid)
+    structure1.__delitem__(first)
+    structure1.insert(first-1,_res11)
+    for x in res11:
+        structure1[first-1].add(x)
+
+    if(structure1[last-1].get_resname() == res12.get_resname()):
+        return structure1
+    else:
+        Nc = structure1[last-1]['N']
+        Cc = structure1[last-1]['C']
+        CAc = structure1[last-1]['CA']
+        _res12 = res12.copy()
+        __res12 = res12.copy()
+        _res12.__init__(structure1[last-1].id,__res12.resname,__res12.segid)
+        structure1.remove(structure1[last-1])
+        structure1.insert(last,_res12)
+        for x in res12:
+            structure1[last-1].add(x)
+
+        Ncf = res12['N']
+        Ccf = res12['C']
+        CAcf = res12['CA']
+
+
+        fixed_vectors = [Nc,CAc,Cc]
+        moving_vectors = [Ncf,CAcf,Ccf]
+        sup = Superimposer()
+        sup.set_atoms(fixed_vectors,moving_vectors)
+        for i in structure1[last-1]:
+            v = structure1[last-1][i.get_name()].get_vector()
+            curcord = dot(v._ar, sup.rotran[0])+sup.rotran[1]
+            structure1[last-1][i.get_name()].set_coord(curcord)
+
+        return structure1
+
+
+#
+# def resinsert(structure1,res,Fid):
+#     """
+#         Вставляет аминокислоту в цепочку
+#         (Возможно работает: Entity->list)
+#         Параметры:
+#             structure1 - структура
+#             res - аминосиклота
+#             Fid - позиция
+#     """
+#     _res = res
+#     _res.__init__(structure1.child_list[Fid-1].id,res.resname,res.segid)
+#     structure1.detach_child(structure1.child_list[Fid-1].id)
+#     structure1.insert(Fid,_res)
+#     return structure1

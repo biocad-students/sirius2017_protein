@@ -1,4 +1,5 @@
 from Bio.PDB import *
+from Bio.PDB.Chain import Chain
 def read(path,name = "test"):
     """
         Читает цепочку аминокислот
@@ -36,3 +37,15 @@ def tta(tup,extra = 0):
         a.append(x)
     a.append(' ')
     return a
+
+def compileres(residues):
+    """
+        Собирает список из residue в chain
+        Параметры:
+            residues - список residue
+    """
+    #sb = StructureBuilder()
+    chain = Chain(0)
+    for x in residues:
+        chain.add(x)
+    return chain

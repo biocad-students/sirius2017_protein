@@ -18,4 +18,6 @@ from math import pi
 loop = read("../pdb/correct/cdr.pdb")
 protein = read("../pdb/correct/frs 22.pdb")
 loop = imposer(loop,protein[31],protein[32])
-write("out.pdb",loop)
+# write("out.pdb",loop)
+
+chain = compileres(loop)
