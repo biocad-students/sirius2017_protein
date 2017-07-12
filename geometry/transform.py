@@ -29,9 +29,9 @@ def calcnewcord(_veca,_vecb,_vecc,angle):
     """
         Расчёт нового вектора, при повороте на заданный угол вокруг оси
         Параметры:
-            _veca,vecb - вектора оси
+            _veca,vecb - векторы оси вектора PDBшные
             _vecc -  начальный вектор
-            angle - угол поворота [pi,pi]
+            angle - угол поворота (в радианах)
     """
     veca = _veca.get_array()
     vecb = _vecb.get_array()

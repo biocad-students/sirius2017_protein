@@ -1,5 +1,15 @@
 from Bio.PDB import *
 from Bio.PDB.Chain import Chain
+
+def getletter(structure):
+    """
+        Достаёт букву из структуры
+        Параметры:
+            structure - структура
+    """
+    return structure[0].child_list[0].id
+
+
 def read(path,name = "test"):
     """
         Читает цепочку аминокислот
@@ -9,7 +19,7 @@ def read(path,name = "test"):
     """
     parser = PDBParser()
     structure = parser.get_structure(name,path)
-    return structure[0]['F']
+    return structure[0][getletter(structure)]
 
 def write(path,record):
     """
