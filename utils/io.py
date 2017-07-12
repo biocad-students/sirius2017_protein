@@ -48,14 +48,19 @@ def tta(tup,extra = 0):
     a.append(' ')
     return a
 
-def compileres(residues):
+def compileres(residues,id = 1):
     """
         Собирает список из residue в chain
         Параметры:
             residues - список residue
+            id - идентификатор цепочки
     """
-    #sb = StructureBuilder()
-    chain = Chain(0)
+    chain = Chain(id)
     for x in residues:
         chain.add(x)
     return chain
+
+
+def writeres(path,residues,id = 1):
+    #print(type(compileres(residues)))
+    write(path,compileres(residues,id))
