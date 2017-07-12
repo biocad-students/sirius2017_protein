@@ -2,6 +2,8 @@
 
 import numpy as np
 from math import sin, cos
+from utils.calc import *
+from numpy import *
 
 def quat_invert(quat):
 	'''
@@ -35,6 +37,28 @@ def vec_mult_vec(vec1, vec2):
 	vec[1] = vec1[2] * vec2[0] - vec1[0] * vec2[2]
 	vec[2] = vec1[0] * vec2[1] - vec1[1] * vec2[0]
 	return vec
+
+def calcnewcord(_veca,_vecb,_vecc, sinangle, cosangle):
+    """
+        Вращение вектора на угол с заданным синусом и косинусом вокруг оси, заданной двумя точками
+        Параметры:
+            _veca,vecb - векторы оси вектора PDBшные
+            _vecc -  начальный вектор
+            sinangle - синус угла поворота
+            cosangle - косинус угла поворота
+    """
+    veca = _veca.get_array()
+    vecb = _vecb.get_array()
+    vecc = _vecc.get_array()
+
+    Eab = normalize(vecb - veca)
+    AC = vecc - veca
+    O = veca + Eab * dot(AC,Eab)
+    Eoc = normalize(vecc - O)
+    S = cross(Eab,Eoc)
+    OCd = distance(O,vecc)
+    M = Eoc * OCd * cosangle + S * OCd * sinangle + O
+    return M
 
 def rotate_vector(point1, point2, vec, angle):
 	'''
