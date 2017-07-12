@@ -93,3 +93,27 @@ def imposer(_structure1,res11,res12):
         structure1[last-1][i.get_name()].set_coord(curcord)
 
     return structure1
+def rmsd(structure1,structure2):
+    """
+        Считает rmsd между двумя структурами
+        Параметры:
+            structure1,structure2 - цепочки атомов
+    """
+    fixed = []
+
+    for x in structure1:
+        fixed.append(x['CA'].get_vector())
+    moving = []
+    for x in structure2:
+        moving.append(x['CA'].get_vector())
+    # sup = Superimposer()
+    # sup.set_atoms(fixed,moving)
+    # return sup.rms
+
+    N = len(moving)
+    preval = 0
+    for x in range(0,N):
+        dist = distance(fixed[x],moving[x])
+        preval += dist**2
+    value = sqrt(preval/N)
+    return value

@@ -19,10 +19,10 @@ from math import pi
 # write("examples/rotExample.pdb",struct)
 
 # MERGE
-loop = read("../pdb/correct/cdr.pdb")
-protein = read("../pdb/correct/frs 22.pdb")
-loop = imposer(loop,protein[31],protein[32])
-writeres("examples/LoopAndFRSExample.pdb",loop)
+# loop = read("../pdb/correct/cdr.pdb")
+# protein = read("../pdb/correct/frs 22.pdb")
+# loop = imposer(loop,protein[31],protein[32])
+# writeres("examples/LoopAndFRSExample.pdb",loop)
 
 
-#final_check("../../../Desktop/sirius_out/regions.txt","../../../Desktop/our/","../../../Desktop/biocad/")
+final_check("../../../Desktop/test_rmsd/regions.txt","../../../Desktop/test_rmsd/source/","../../../Desktop/test_rmsd/result/","../../../Desktop/result.txt")
