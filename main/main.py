@@ -33,7 +33,7 @@ for counter in range(0,2):
 
     ourchain = Chain(0)
     firstRes = ourres[cdr3[counter][1]-1]
-    lastRes =  ourres[cdr3[counter][2]+1]
+    lastRes =  ourres[cdr3[counter][2]]
     print('cords',firstRes,lastRes)
     for x in range(cdr3[counter][1],cdr3[counter][2]):
             ourchain.add(ourres[x])
@@ -47,9 +47,13 @@ for counter in range(0,2):
     # 3 STEP
     merged = smartsamp(sub)
     #4 STEP
+    debugI(merged)
+    print("FAL amino",firstRes,lastRes)
     combined = imposer(merged,firstRes,lastRes)
-    writeres("beforeccd.pdb",combined)
-    write("last.pdb",lastRes.copy())
+    print('*'*10)
+    # debugI(combined)
+    # writeres("beforeccd.pdb",combined)
+    # write("last.pdb",lastRes.copy())
     #5 STEP
     #print(combined)
     afterCCD = CCD(combined,lastRes)

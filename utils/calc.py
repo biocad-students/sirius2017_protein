@@ -16,7 +16,7 @@ def normalize(v):
     """
         Нормализует вектор v
         Параметры:
-            v - ветор
+            v - ветkор
     """
     n = linalg.norm(v)
     if n == 0:
@@ -58,12 +58,23 @@ def imposer(_structure1,res11,res12):
             curcord = dot(v._ar, sup.rotran[0])+sup.rotran[1]
             structure1[spx][i.get_name()].set_coord(curcord)
 # 1 SELECT RES ALIGN
+    # _res11 = res11.copy()
+    # __res11 = res11.copy()
+    # _res11.__init__(structure1[first].id,__res11.resname,__res11.segid)
+    # structure1.__delitem__(first-1)
+    # print(first)
+    # structure1.insert(first,_res11)
+    # cindex = 1
+
     _res11 = res11.copy()
     __res11 = res11.copy()
-    _res11.__init__(structure1[first-1].id,__res11.resname,__res11.segid)
-    structure1.__delitem__(first-1)
-    structure1.insert(first-1,_res11)
+    _res11.__init__(structure1[first].id,__res11.resname,__res11.segid)
+    structure1.__delitem__(first)
+    print(first)
+    structure1.insert(first,_res11)
     cindex = 1
+
+
     for x in res11:
         x.detach_parent()
         x.id = (' ',cindex,' ')

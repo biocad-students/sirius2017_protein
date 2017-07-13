@@ -9,7 +9,7 @@ import numpy
 
 def smartimposer(ta,structure,splice):
     for x in splice:
-        print(x)
+        #print(x)
         fixed = [structure[x-1]['N'],structure[x-1]['CA'],structure[x-1]['C']]
         moving = [structure[x]['N'],structure[x]['CA'],structure[x]['C']]
         sp = Superimposer()
@@ -45,7 +45,7 @@ def smartimposer(ta,structure,splice):
             angle = calc_dihedral(O,C,N,H)
             if(abs(angle)<math.radians(160)):
                 structure = rot(structure,math.pi-angle,x,0)
-                print("turn")
+                print("turn on angle ",math.degrees(angle))
     debugI(structure)
     return structure
 
