@@ -65,5 +65,4 @@ def compileres(residues,id = 1):
     return chain
 
 def writeres(path,residues,id = 1):
-    #print(type(compileres(residues)))
     write(path,compileres(residues,id))

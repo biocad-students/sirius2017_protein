@@ -19,16 +19,6 @@ def smartimposer(ta,structure,splice):
                 v = r.get_vector()
                 cord = numpy.dot(v._ar,sp.rotran[0])+sp.rotran[1]
                 structure[y][r.get_name()].set_coord(cord)
-        # for x in range(1,len(structure)):
-        #     if((letter(structure[x-1]) != 'P') and (letter(structure[x]) != 'P')):
-        #         O = structure[x-1]['O'].get_vector()
-        #         C = structure[x-1]['C'].get_vector()
-        #         N = structure[x]['N'].get_vector()
-        #         H = structure[x]['H'].get_vector()
-        #         angle = calc_dihedral(O,C,N,H)
-        #         if(abs(angle)<math.radians(100)):
-        #             print("turn")
-        #             structure = rot(structure,math.pi-angle+0.3,x,0)
     for x in splice:
         structure[x-1] = 0
     for x in splice:

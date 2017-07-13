@@ -59,7 +59,6 @@ for counter in range(1):
     # Соединяет цепокич в одну
     merged = smartsamp(sub)
     bres("merged", merged)
-    #Импозер соединяет петельку с концами белка
     print("firstRes", firstRes)
     print("lastRes", lastRes)
     combined = imposer(merged,firstRes,lastRes)
