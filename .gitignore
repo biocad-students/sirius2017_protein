@@ -5,3 +5,5 @@ debug/out.pdb
 debug/examples
 params/.ipynb_checkpoints
 sampling/__pycache__/
+/sirius_out/*.pdb
+/sirius_out/regions.txt
