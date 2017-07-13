@@ -11,15 +11,15 @@ def dict_ziper(dictionary):
 		result.append(dictionary[key])
 	return result
 
-def maxSubstring(string1, string2):
+def maxSubstring(string1, string2, lenner):
 	maxpos = (0, 0, 0)
 	matrix = np.zeros((len(string1)+1,len(string2)+1), dtype=np.int)
 	for i in range(len(string1)+1):
 		for j in range(len(string2)+1):
 			if min(i,j) > 0 and string1[i-1] == string2[j-1]:
 				matrix[i,j] = matrix[i-1,j-1] + 1
-				if matrix[i,j] > maxpos[2]:
-					maxpos = (i,j,matrix[i,j])
+				if matrix[i,j] - lenner > maxpos[2]:
+					maxpos = (i,j,matrix[i,j]- lenner)
 	substring = ''
 	for i in range(maxpos[2]):
 		substring = string1[maxpos[0]-1-i]+ substring
@@ -39,11 +39,17 @@ def heliSubstring(to_parse, var_number, hidden_num=None):
 		del(helis[index])
 		del(ids[index])
 		helis = ' '.join(helis)
-	results={}
-	while not all([s == '' for s in to_parse.split('%')]):
-		out = maxSubstring(helis,to_parse)
-		nums = get_residue_number(out[0], helis)
-		results[out[1]] = (ids[nums[0]], nums[1], out[2])
-		to_parse = to_parse[:out[1]] + '%' * out[2] + to_parse[out[1]+out[2]:]
-		#print(to_parse, out)
-	return dict_ziper(results)
+	results=[]
+	for i in range(var_number):
+		parsing = to_parse
+		results.append({})
+		i2 = 0
+		while not all([s == '' for s in parsing.split('%')]):
+			out = maxSubstring(helis,parsing, min(max(i-i2,0), max(max([len(s) for s in parsing.split('%')]) - 2, 0)))
+			nums = get_residue_number(out[0], helis)
+			results[i][out[1]] = (ids[nums[0]], nums[1], out[2])
+			parsing = parsing[:out[1]] + '%' * out[2] + parsing[out[1]+out[2]:]
+			i2+=1
+		results[i] = dict_ziper(results[i])
+	return results
+print(heliSubstring('SDVVVVTSIMRPAYYYGM', 3))
