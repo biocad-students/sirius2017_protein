@@ -30,11 +30,20 @@ def heliSubstring(to_parse, var_number, hidden_num=None):
 	f = open('../sirius_out/helis.txt', 'r')
 	helis = f.read()
 	f.close()
+	f = open('../sirius_out/ids.txt', 'r')
+	ids = f.read().split()
+	f.close()
+	if hidden_num:
+		index = ids.index(hidden_num)
+		helis = helis.split()
+		del(helis[index])
+		del(ids[index])
+		helis = ' '.join(helis)
 	results={}
 	while not all([s == '' for s in to_parse.split('%')]):
 		out = maxSubstring(helis,to_parse)
 		nums = get_residue_number(out[0], helis)
-		results[out[1]] = (nums[0], nums[1], out[2])
+		results[out[1]] = (ids[nums[0]], nums[1], out[2])
 		to_parse = to_parse[:out[1]] + '%' * out[2] + to_parse[out[1]+out[2]:]
 		#print(to_parse, out)
 	return dict_ziper(results)
