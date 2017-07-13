@@ -18,7 +18,6 @@ def arr(vec):  #Конвертация из Vector Biopython в array[3] numpy
 def get_intersection(dot1, dot2, vec): #Нахождение точки пересечения прямой (задаётся dot1 и dot2) и перпендикуляра из vec
 		return np.dot(vec - dot1, norm(dot2-dot1)) * norm(dot2-dot1) + dot1
 def do_rotation(loop, endpoint, res_index, char1, char2):
-	print(loop[res_index])
 	dot1 = loop[res_index][char1].get_vector()
 	dot2= loop[res_index][char2].get_vector()
 	O_points = np.array([get_intersection(arr(dot1),arr(dot2), arr(loop[-1][x].get_vector())) for x in ['N', 'CA', 'C']])	#Координаты точек пересечения осей и перпедикуляров из атомов последнего residue на них (Oi)
