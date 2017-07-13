@@ -21,7 +21,7 @@ def normalize(v):
     n = linalg.norm(v)
     if n == 0:
         return v
-    return v / linalg.norm(v)
+    return v / n
 
 
 def imposer(_structure1,res11,res12):
@@ -33,12 +33,12 @@ def imposer(_structure1,res11,res12):
     """
     first = 10000
     last = 0
-    structure1 = _structure1.child_list
+    structure1 = _structure1
+    #structure1 = _structure1.child_list
     #structure1 = _structure1.copy()
     for x in structure1:
         first = min(x.id[1],first)
         last = max(x.id[1],last)
-
     Nc = structure1[first-1]['N']
     Cc = structure1[first-1]['C']
     CAc = structure1[first-1]['CA']
@@ -46,7 +46,7 @@ def imposer(_structure1,res11,res12):
     Ncf =  res11['N']
     Ccf =  res11['C']
     CAcf = res11['CA']
-
+    #print(Nc.get_vector(),Ncf.get_vector())
 # IMPORTSER MODULE
     fixed_vectors = [Ncf,CAcf,Ccf]
     moving_vectors = [Nc,CAc,Cc]
@@ -63,7 +63,11 @@ def imposer(_structure1,res11,res12):
     _res11.__init__(structure1[first-1].id,__res11.resname,__res11.segid)
     structure1.__delitem__(first-1)
     structure1.insert(first-1,_res11)
+    cindex = 1
     for x in res11:
+        x.detach_parent()
+        x.id = (' ',cindex,' ')
+        cindex+=1
         structure1[first-1].add(x)
 
 
@@ -76,7 +80,7 @@ def imposer(_structure1,res11,res12):
     structure1.remove(structure1[last-1])
     structure1.insert(last,_res12)
     for x in res12:
-        structure1[last-1].add(x)
+        structure1[last-1].add(x.copy())
 
     Ncf = res12['N']
     Ccf = res12['C']
@@ -91,6 +95,7 @@ def imposer(_structure1,res11,res12):
         v = structure1[last-1][i.get_name()].get_vector()
         curcord = dot(v._ar, sup.rotran[0])+sup.rotran[1]
         structure1[last-1][i.get_name()].set_coord(curcord)
+
     return structure1
 
 def rmsd(structure1,structure2):

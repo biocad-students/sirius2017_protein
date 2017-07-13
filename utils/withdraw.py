@@ -19,4 +19,3 @@ def get_residues_by_pos(resList):
 		align = sum([ len(s) for s in regions[res_tuple[0]][-2]]) + res_tuple[1]
 		residues.append(list(structure.get_residues())[align:align+res_tuple[2]+1])
 	return residues
-

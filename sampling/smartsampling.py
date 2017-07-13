@@ -35,23 +35,23 @@ def smartimposer(ta,structure,splice):
     for x in splice:
         structure.remove(0)
     structure.pop()
-        #
-        # for x in range(2,len(structure)):
-        #     if(letter(structure[x]) != 'P'):
-        #         O = structure[x-2]['O'].get_vector()
-        #         C = structure[x-2]['C'].get_vector()
-        #         N = structure[x]['N'].get_vector()
-        #         H = structure[x]['H'].get_vector()
-        #         angle = calc_dihedral(O,C,N,H)
-        #         if(abs(angle)<math.radians(160)):
-        #             structure = rot(structure,math.pi-angle,x,0)
-        #             print("turn")
+
+    for x in range(1,len(structure)):
+        if(letter(structure[x]) != 'P'):
+            O = structure[x-1]['O'].get_vector()
+            C = structure[x-1]['C'].get_vector()
+            N = structure[x]['N'].get_vector()
+            H = structure[x]['H'].get_vector()
+            angle = calc_dihedral(O,C,N,H)
+            if(abs(angle)<math.radians(160)):
+                structure = rot(structure,math.pi-angle,x,0)
+                print("turn")
     debugI(structure)
     return structure
 
 def debugI(struct):
     for x in struct:
-            print(x.id[1],x.resname)
+        print(x.id[1],x.resname)
 
 def smartsamp(structure):
     """
