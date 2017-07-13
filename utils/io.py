@@ -56,7 +56,11 @@ def compileres(residues,id = 1):
             id - идентификатор цепочки
     """
     chain = Chain(id)
+    startid = 0
     for x in residues:
+        x.detach_parent()
+        x.id = (' ',startid,' ')
+        startid+=1
         chain.add(x)
     return chain
 

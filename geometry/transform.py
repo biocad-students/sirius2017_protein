@@ -46,20 +46,29 @@ def calcnewcord(_veca,_vecb,_vecc,angle):
     M = Eoc * OCd * math.cos(angle) + S * OCd * math.sin(angle) + O
     return M
 
-def rot(structure,angle):
+def rot(structure,angle,start = 0,isNewCalcReq = 1,FA = 'CA',FB = 'C',SA = 'N',SB = 'CA',):
     """
         Поворот структуры вогрук оси С-N
         Параметры:
             structure - структура
-            angle - угол поворота [pi,pi]
+            angle - угол поворота радианы
+            start - номер аминокислоты с которой начинать поворот
+            FA,FB - атомы первой аминокислоты
+            SA,SB - атомы второй аминокислоты
+            isNewCalcReq - вычисление дигидрального угла
+
     """
-    for j in range(2,len(structure)): # -2 из за заглушки
-        vecCA = structure[j]['CA'].get_vector()
-        vecC = structure[j]['C'].get_vector()
-        vecNN = structure[j+1]['N'].get_vector()
-        vecCAN = structure[j+1]['CA'].get_vector()
-        DIangle = calc_dihedral(vecCA,vecC,vecNN,vecCAN)
-        extra = angle - DIangle
+    #for j in range(2,len(structure)): # -2 из за заглушки
+    for j in range(start,len(structure)): # -2 из за заглушки
+        vecCA = structure[j][FA].get_vector()
+        vecC = structure[j][FB].get_vector()
+        vecNN = structure[j+1][SA].get_vector()
+        vecCAN = structure[j+1][SB].get_vector()
+        if(isNewCalcReq == 1):
+            DIangle = calc_dihedral(vecCA,vecC,vecNN,vecCAN)
+            extra = angle - DIangle
+        else:
+            extra = angle
         for spx in range(j+1,len(structure)):
             for i in structure[spx]:
                 vecALL = structure[spx][i.get_name()].get_vector()

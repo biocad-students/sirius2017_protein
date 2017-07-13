@@ -91,8 +91,8 @@ def imposer(_structure1,res11,res12):
         v = structure1[last-1][i.get_name()].get_vector()
         curcord = dot(v._ar, sup.rotran[0])+sup.rotran[1]
         structure1[last-1][i.get_name()].set_coord(curcord)
-
     return structure1
+
 def rmsd(structure1,structure2):
     """
         Считает rmsd между двумя структурами
@@ -117,3 +117,24 @@ def rmsd(structure1,structure2):
         preval += dist**2
     value = sqrt(preval/N)
     return value
+
+
+def link(structure1,structure2):
+    """
+        Считает матрицу поворота между двумя аминокислотами
+        Параметры:
+            structure1 - стоит
+            structure2 - двигается
+    """
+    Cf = structure1['C']
+    CAf = structure1['CA']
+    Nf = structure1['N']
+
+    Cm = structure1['C']
+    CAm = structure1['CA'].get_vector()
+    Nm = structure1['N'].get_vector()
+    fixed = [Cf,CAf,Nf]
+    moving = [Cm,CAm,Nm]
+    sup = Superimposer()
+    sup.set_atoms(fixed,moving)
+    return sup.rotran
