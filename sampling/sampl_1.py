@@ -223,7 +223,7 @@ def getletter(structure):
             structure - структура
     """
     return structure[0].child_list[0].id
-def generate(s, cnt):
+def generate(s):
     structure = read('/home/ludmila/git/sirius2017_protein/sampling/aminos_out.pdb', "test")
     arr = {}
     for residue in structure:
@@ -333,8 +333,7 @@ def moveTo(last, amino1):
         for atom in amino:
             atom.set_coord(rotate_vector(N.get_array(), H.get_array(), atom.get_vector().get_array(), pi))
     return amino
-from Bio.PDB import *
-from Bio.PDB.Chain import Chain
+
 
 def getletter(structure):
     """
@@ -409,10 +408,54 @@ def culc_angle(a, b, c):
     z = dist(a, c)
     return arccos((x * x + y * y - z * z) / (2 * x * y))
 
+def rotate_by_dih(residues, angles):
+    for i in range(len(angles)):
+        CA = residues[i]['CA'].get_vector()
+        C = residues[i]['C'].get_vector()
+        N = residues[i]['N'].get_vector()
+        N2 = residues[i+1]['N'].get_vector()
+        resi_copy=residues[i].copy()
+        for j in range(i, len(residues)):
+            residues[j] = rot(residues[j], rad(angles[i][0]), N, CA, C, N2)
+        O = residues[i]['O'].get_vector()
+        resi_copy['O'].set_coord(O)
+        residues[i]=resi_copy
+        CA = residues[i]['CA'].get_vector()
+        C = residues[i]['C'].get_vector()
+        CA2 = residues[i+1]['CA'].get_vector()
+        N2 = residues[i+1]['N'].get_vector()
+        for j in range(i + 1, len(residues)):
+            residues[j] = rot(residues[j], rad(angles[i][1]), CA, C, N2, CA2)
+        C = residues[i]['C'].get_vector()
+        CA2 = residues[i+1]['CA'].get_vector()
+        N2 = residues[i+1]['N'].get_vector()
+        C2 = residues[i+1]['C'].get_vector()
+        H = get_H(residues[i+1])
+        for j in range(i + 1, len(residues)):
+            residues[j] = rot(residues[j], rad(angles[i][2]), C, N2, CA2, C2)
+        if(residues[i+1].get_resname()!="PRO"):
+            residues[i+1]['H'].set_coord(H)
+        """for i in range(len(residues)-1):
+            C = residues[i]['C'].get_vector()
+            O = residues[i]['O'].get_vector()
+            N = residues[i+1]['N'].get_vector()
+            H = residues[i+1]['H'].get_vector()
+            perp = vec_mult_vec(C - N, O - N)
+            angle = rad(120)-calc_angle(C, N, H)
+            perp[0] += N[0]
+            perp[1] += N[1]
+            perp[2] += N[2]
+            residues[i+1]['H'].set_coord(rotate_vector(N.get_array(), perp, residues[i+1]['H'].get_vector().get_array(), -angle))"""
+    return residues
 def main():
-    s=generate("AQGSSWPKP", 10)
+    s=generate("AQGP")
+    angles=[(-53.005436, 166.00095, -107.3551), (137.84758, -172.47937, 90.52946), (-83.336555, -6.25399, -71.49093)]
     for i in range(len(s)):
-        writeres('/tmp/'+str(i)+'.pdb', s[i])
+        cur_s = s[i]
+        writeres('/tmp/t' + str(i) + '.pdb', cur_s)
+        result = rotate_by_dih(cur_s, angles)
+        writeres('/tmp/'+str(i)+'.pdb', result)
+
 
 if __name__ == "__main__":
     main()
