@@ -45,13 +45,8 @@ def smartimposer(ta,structure,splice):
             angle = calc_dihedral(O,C,N,H)
             if(abs(angle)<math.radians(160)):
                 structure = rot(structure,math.pi-angle,x,0)
-                print("turn on angle ",math.degrees(angle))
-    debugI(structure)
     return structure
 
-def debugI(struct):
-    for x in struct:
-        print(x.id[1],x.resname)
 
 def smartsamp(structure):
     """
