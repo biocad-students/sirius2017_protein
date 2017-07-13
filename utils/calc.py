@@ -24,90 +24,89 @@ def normalize(v):
     return v / n
 
 
-def imposer(_structure1,res11,res12):
+def imposer(structure,_leftAmino,_rightAmino):
     """
         Структурное выравнивание по 2 цепочкам атомов
         Параметры:
             structure1 - петелька
-            res11,res12 - аминокислоты двух концов белка
+            leftAmino,rightAmino - аминокислоты двух концов белка
     """
-    first = 10000
-    last = 0
-    structure1 = _structure1
+    # first = 0
+    # last = len(structure1)-1
+    leftAmino = _leftAmino.copy()
+    rightAmino = _rightAmino.copy()
+    leftAminoCDR = structure[0].copy()
+    rightAminoCDR = structure[-1].copy()
+    structure1 = [x.copy() for x in structure[1:-1]]
+    # structure1 = _structure1
     #structure1 = _structure1.child_list
     #structure1 = _structure1.copy()
-    for x in structure1:
-        first = min(x.id[1],first)
-        last = max(x.id[1],last)
-    Nc = structure1[first-1]['N']
-    Cc = structure1[first-1]['C']
-    CAc = structure1[first-1]['CA']
 
-    Ncf =  res11['N']
-    Ccf =  res11['C']
-    CAcf = res11['CA']
+    # for x in structure1:
+    #     first = min(x.id[1],first)
+    #     last = max(x.id[1],last)
+
+    Nc = leftAminoCDR['N']
+    Cc = leftAminoCDR['C']
+    CAc = leftAminoCDR['CA']
+
+    Ncf =  leftAmino['N']
+    Ccf =  leftAmino['C']
+    CAcf = leftAmino['CA']
     #print(Nc.get_vector(),Ncf.get_vector())
 # IMPORTSER MODULE
     fixed_vectors = [Ncf,CAcf,Ccf]
     moving_vectors = [Nc,CAc,Cc]
     sup = Superimposer()
     sup.set_atoms(fixed_vectors,moving_vectors)
-    for spx in range(first,last):
-        for i in structure1[spx]:
-            v = structure1[spx][i.get_name()].get_vector()
-            curcord = dot(v._ar, sup.rotran[0])+sup.rotran[1]
-            structure1[spx][i.get_name()].set_coord(curcord)
+    (rotation_m, transition_v) = sup.rotran
+    for amino in (structure1 + [rightAminoCDR]):
+        for atom in amino:
+            v = atom.get_vector()
+            curcord = dot(v._ar, rotation_m) + transition_v
+            atom.set_coord(curcord)
 # 1 SELECT RES ALIGN
-    # _res11 = res11.copy()
-    # __res11 = res11.copy()
-    # _res11.__init__(structure1[first].id,__res11.resname,__res11.segid)
+    # _leftAmino = leftAmino.copy()
+    # __leftAmino = leftAmino.copy()
+    # _leftAmino.__init__(structure1[first].id,__leftAmino.resname,__leftAmino.segid)
     # structure1.__delitem__(first-1)
     # print(first)
-    # structure1.insert(first,_res11)
+    # structure1.insert(first,_leftAmino)
     # cindex = 1
 
-    _res11 = res11.copy()
-    __res11 = res11.copy()
-    _res11.__init__(structure1[first].id,__res11.resname,__res11.segid)
-    structure1.__delitem__(first)
-    print(first)
-    structure1.insert(first,_res11)
-    cindex = 1
+    # cindex = 1
+    #
+    # for x in leftAmino:
+    #     x.detach_parent()
+    #     x.id = (' ',cindex,' ')
+    #     cindex+=1
+    #     structure1[first-1].add(x)
 
 
-    for x in res11:
-        x.detach_parent()
-        x.id = (' ',cindex,' ')
-        cindex+=1
-        structure1[first-1].add(x)
+    Nc = rightAminoCDR['N']
+    Cc = rightAminoCDR['C']
+    CAc = rightAminoCDR['CA']
 
-
-    Nc = structure1[last-1]['N']
-    Cc = structure1[last-1]['C']
-    CAc = structure1[last-1]['CA']
-    _res12 = res12.copy()
-    __res12 = res12.copy()
-    _res12.__init__(structure1[last-1].id,__res12.resname,__res12.segid)
-    structure1.remove(structure1[last-1])
-    structure1.insert(last,_res12)
-    for x in res12:
-        structure1[last-1].add(x.copy())
-
-    Ncf = res12['N']
-    Ccf = res12['C']
-    CAcf = res12['CA']
+    # print("struct1")
+    # for x in structure1:
+    #     print(x)
+    Ncf = rightAmino['N']
+    Ccf = rightAmino['C']
+    CAcf = rightAmino['CA']
 
 
     fixed_vectors = [Nc,CAc,Cc]
     moving_vectors = [Ncf,CAcf,Ccf]
     sup = Superimposer()
     sup.set_atoms(fixed_vectors,moving_vectors)
-    for i in structure1[last-1]:
-        v = structure1[last-1][i.get_name()].get_vector()
-        curcord = dot(v._ar, sup.rotran[0])+sup.rotran[1]
-        structure1[last-1][i.get_name()].set_coord(curcord)
+    (rotation_m, transition_v) = sup.rotran
+    for atom in rightAmino:
+        v = atom.get_vector()
+        curcord = dot(v._ar, rotation_m) + transition_v
+        atom.set_coord(curcord)
 
-    return structure1
+    result = [leftAmino] + structure1 + [rightAmino]
+    return result
 
 def rmsd(structure1,structure2):
     """

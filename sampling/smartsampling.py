@@ -9,7 +9,6 @@ import numpy
 
 def smartimposer(ta,structure,splice):
     for x in splice:
-        #print(x)
         fixed = [structure[x-1]['N'],structure[x-1]['CA'],structure[x-1]['C']]
         moving = [structure[x]['N'],structure[x]['CA'],structure[x]['C']]
         sp = Superimposer()
@@ -35,7 +34,14 @@ def smartimposer(ta,structure,splice):
     for x in splice:
         structure.remove(0)
     structure.pop()
-
+    index = 0
+    _structure = []
+    for x in structure:
+        tmp = x.copy()
+        tmp.id = (' ',index,' ')
+        index+=1
+        _structure.append(tmp)
+    structure = _structure
     for x in range(1,len(structure)):
         if(letter(structure[x]) != 'P'):
             O = structure[x-1]['O'].get_vector()
