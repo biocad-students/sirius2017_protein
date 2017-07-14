@@ -6,7 +6,6 @@ from math import sqrt
 def get_align(loop, endpoint, char): #Отстояние атомa char конца петли от его конечной позиции
 	return  np.linalg.norm(arr(loop[-1][char].get_vector())-arr(endpoint[char].get_coord()))
 
-
 def norm(vec): #Нормировка вектора по длине 1
 	if sum(list(vec)) > 0:
 		return arr(vec)/np.linalg.norm(arr(vec))

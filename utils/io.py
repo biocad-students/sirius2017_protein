@@ -9,7 +9,6 @@ def getletter(structure):
     """
     return structure[0].child_list[0].id
 
-
 def read(path,name = "test"):
     """
         Читает цепочку аминокислот
