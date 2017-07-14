@@ -7,7 +7,7 @@ def regions_to_dict(regions): #Превращает строку файла regi
 			result[string.split()[0]] = string.split()[1:]
 	return result
 
-def get_residues_by_pos(resList): 
+def get_residues_by_pos(resList):
 	'''
 		Принимает список кортежей в формате вывода strstr.loopSubstring, возвращает список списков соответствующих residue
 	'''
@@ -19,4 +19,3 @@ def get_residues_by_pos(resList):
 		align = sum([ len(s) for s in regions[res_tuple[0]][-2]]) + res_tuple[1]
 		residues.append(list(structure.get_residues())[align:align+res_tuple[2]+1])
 	return residues
-

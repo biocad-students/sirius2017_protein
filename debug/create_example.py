@@ -1,4 +1,3 @@
-
 import sys
 sys.path.append("../")
 
@@ -21,14 +20,14 @@ from sampling.smartsampling import *
 # MERGE
 # loop = read("../pdb/correct/cdr.pdb")
 # protein = read("../pdb/correct/frs 22.pdb")
-# loop = imposer(loop,protein[31],protein[32])
+# loop = imposer(loop.child_list,protein[31],protein[32])
 # writeres("examples/LoopAndFRSExample.pdb",loop)
 
 # FINAL TEST
 #final_check("../../../Desktop/test_rmsd/regions.txt","../../../Desktop/test_rmsd/source/","../../../Desktop/test_rmsd/result/","../../../Desktop/result.txt")
 
 # SMART SAMPLING
-print("ssadads")
+#print("ssadads")
 a = read("../pdb/1.pdb")
 b = read("../pdb/2.pdb")
 c = read("../pdb/3.pdb")

@@ -59,7 +59,6 @@ def rot(structure,angle,start = 0,isNewCalcReq = 1,FA = 'CA',FB = 'C',SA = 'N',S
             isNewCalcReq - вычисление дигидрального угла
 
     """
-    #for j in range(2,len(structure)): # -2 из за заглушки
     for j in range(start,len(structure)-1): # -2 из за заглушки
         vecCA = structure[j][FA].get_vector()
         vecC = structure[j][FB].get_vector()

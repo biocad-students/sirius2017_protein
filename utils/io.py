@@ -26,7 +26,7 @@ def write(path,record):
         Записывает цепочку в файл
         Параметры:
             path - путь к файлу
-            name - имя структуры
+            record - структура
     """
     io = PDBIO()
     io.set_structure(record)
@@ -65,5 +65,4 @@ def compileres(residues,id = 1):
     return chain
 
 def writeres(path,residues,id = 1):
-    #print(type(compileres(residues)))
     write(path,compileres(residues,id))
