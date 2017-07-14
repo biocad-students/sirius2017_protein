@@ -22,17 +22,25 @@ from Bio.PDB.Chain import Chain
 from algo.CCD import *
 import timeit
 
+IsDebugReq = False
 
 def debugI(name,structure):
-    print(name)
-    for x in structure:
-        print(x)
-    print("\n\n")
+    if(IsDebugReq):
+        file = open("debug.log","a")
+        file.write(name)
+        try:
+            for x in structure:
+                file.write(x)
+        except:
+                file.write(structure)
+        file.write("\n\n")
 
 def smartWork():
     regionPath = "../sirius_out/regions.txt"
     structsPath = "../sirius_out/"
 
+    folderwithresult = "result/"
+    os.mkdir(folderwithresult)
     cdr3 = []
     file1 = open(regionPath, "r")
     _tmp = file1.read()
@@ -41,12 +49,12 @@ def smartWork():
     tmp = []
     for x in lines:
         tmp.append(x.split(' '))
-    for x in range(0,10):
+    for x in range(0,2):
         cordstart = len(tmp[x][1]+tmp[x][2]+tmp[x][3]+tmp[x][4]+tmp[x][5])
         cordstop = cordstart+len(tmp[x][6])
         cdr3.append([tmp[x][0],cordstart,cordstop])
     #for counter in range(0,len(cdr3)):
-    for counter in range(1):
+    for counter in range(2):
         ourpdb = read(structsPath+str(cdr3[counter][0])+".pdb")
         ourres = ourpdb.child_list
         ourchain = Chain(0)
@@ -54,27 +62,28 @@ def smartWork():
         lastRes =  ourres[cdr3[counter][2]]
         for x in range(cdr3[counter][1]-1,cdr3[counter][2]+1):
                 ourchain.add(ourres[x])
-        print("chain",ourchain.child_list)
         # 1 STEP
         letterList = [letter(x) for x in ourchain.child_list]
-        preSub = loopSubstring(''.join(letterList),2,cdr3[counter][0])
-        os.mkdir(str(cdr3[counter][0]))
-        directory = str(cdr3[counter][0])+"/"
-        # Собирает цепочки по буквам
-        sub = get_residues_by_pos(preSub[0])
-        debugI("sub",sub)
-        # Соединяет цепокич в одну
-        merged = smartsamp(sub)
-        debugI("merged",merged)
-        combined = imposer(merged,firstRes,lastRes)
-        debugI("combined",combined)
-        #5 CCD
-        afterCCD = CCD(combined,lastRes)
-        # 6 скл
-        firstPart = ourres[0:cdr3[counter][1]]
-        secondPart = ourres[cdr3[counter][2]:]
-        chainArray = firstPart+afterCCD[1:-1]+secondPart
-        writeres(directory+str(counter)+".pdb",chainArray)
+        _preSub = loopSubstring(''.join(letterList),10,cdr3[counter][0])
+        os.mkdir(folderwithresult+str(cdr3[counter][0]))
+        for fileenum in range(len(_preSub)):
+            directory = str(cdr3[counter][0])+"/"
+            # Собирает цепочки по буквам
+            sub = get_residues_by_pos(_preSub[fileenum])
+            for i in range(len(sub)):
+                debugI(str(i), sub[i])
+            # Соединяет цепокич в одну
+            merged = smartsamp(sub)
+            debugI("merged",merged)
+            combined = imposer(merged,firstRes,lastRes)
+            debugI("combined",combined)
+            #5 CCD
+            afterCCD = CCD(combined,lastRes)
+            # 6 скл
+            firstPart = ourres[0:cdr3[counter][1]]
+            secondPart = ourres[cdr3[counter][2]:]
+            chainArray = firstPart+afterCCD[1:-1]+secondPart
+            writeres(folderwithresult+directory+str(fileenum)+".pdb",chainArray)
 
 
 

@@ -47,14 +47,14 @@ def tta(tup,extra = 0):
     a.append(' ')
     return a
 
-def compileres(residues,id = 1):
+def compileres(residues,id = 'H'):
     """
         Собирает список из residue в chain
         Параметры:
             residues - список residue
             id - идентификатор цепочки
     """
-    chain = Chain(id)
+    chain = Chain("H")
     startid = 0
     for x in residues:
         x.detach_parent()
@@ -63,5 +63,5 @@ def compileres(residues,id = 1):
         chain.add(x)
     return chain
 
-def writeres(path,residues,id = 1):
+def writeres(path,residues,id = 'H'):
     write(path,compileres(residues,id))

@@ -2,6 +2,7 @@ from Bio.PDB import *
 from Bio.PDB.Structure import Structure
 from utils.utilits import *
 from geometry.transform import *
+from sampling.sampl1 import 
 import numpy,math
 
 def smartimposer(ta,structure,splice):
@@ -39,6 +40,7 @@ def smartimposer(ta,structure,splice):
             angle = calc_dihedral(O,C,N,H)
             if(abs(angle)<math.radians(160)):
                 structure = rot(structure,math.pi-angle,x,0)
+
     return structure
 
 
