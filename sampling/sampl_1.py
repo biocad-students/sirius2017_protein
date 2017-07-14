@@ -154,14 +154,6 @@ def samples(amino_seq, cnt):
         result.append(rotate_by_dih(s, angle))
     return result
 
-def samp_gen(str, cnt):
-    s=samples("AQGP", 10)
-    """for i in range(len(s)):
-        cur_s = s[i]
-        writeres('/tmp/t' + str(i) + '.pdb', cur_s)"""
-    return s
-
-
 """if __name__ == "__main__":
     main()"""
 
