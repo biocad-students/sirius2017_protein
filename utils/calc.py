@@ -21,7 +21,6 @@ def normalize(v):
         return v
     return v / n
 
-
 def imposer(structure,_leftAmino,_rightAmino):
     """
         Структурное выравнивание по 2 цепочкам атомов
@@ -96,7 +95,6 @@ def rmsd(structure1,structure2):
         preval += dist**2
     value = sqrt(preval/N)
     return value
-
 
 def link(structure1,structure2):
     """
