@@ -39,4 +39,3 @@ def varrand(mas, b):
         z += 1
         x = 0
     return (itog)
-varrand ('QQQ', 7)

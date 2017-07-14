@@ -2,6 +2,7 @@ from Bio.SeqUtils import *
 from geometry.rotation import *
 from geometry.transform import *
 from utils.io import *
+from params.params_sr3 import *
 
 def dist(coordA, coordB):
     # длина вектора
@@ -20,7 +21,7 @@ def generate(s):
             result.append(res)
         else:
             result.append(arr[c])
-    return [result]
+    return result
 
 def grad(angle):
     return angle*180/pi
@@ -145,14 +146,19 @@ def rotate_by_dih(residues, angles):
             residues[i+1]['H'].set_coord(H)
     return residues
 
+def samples(amino_seq, cnt):
+    angles=varrand(amino_seq, cnt)
+    result=[]
+    for angle in angles:
+        s=generate(amino_seq)
+        result.append(rotate_by_dih(s, angle))
+    return result
+
 def main():
-    s=generate("AQGP")
-    angles=[(-53.005436, 166.00095, -107.3551), (137.84758, -172.47937, 90.52946),(-83.336555, -6.25399, -71.49093)]
+    s=samples("AQGP", 10)
     for i in range(len(s)):
         cur_s = s[i]
         writeres('/tmp/t' + str(i) + '.pdb', cur_s)
-        result = rotate_by_dih(cur_s, angles)
-        writeres('/tmp/'+str(i)+'.pdb', result)
 
 if __name__ == "__main__":
     main()
