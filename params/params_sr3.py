@@ -22,9 +22,9 @@ def varrand(mas, b):
             r = random.randint(0, q - 1)
             g = arr[r].split()
             an = []
-            an.append(g[2])
-            an.append(g[4])
-            an.append(g[3])
+            an.append(int (g[2]))
+            an.append(int (g[4]))
+            an.append(int (g[3]))
             kolvo.append(an)
             p += 1
         f.close()
