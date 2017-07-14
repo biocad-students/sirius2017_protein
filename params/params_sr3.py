@@ -1,3 +1,16 @@
+
+# coding: utf-8
+
+# In[ ]:
+
+#Случайные углы
+from os import listdir
+from Bio.SeqUtils import *
+from Bio.PDB import *
+from math import *
+import numpy as np
+import random
+лщдмщ = []
 def varrand(mas, b):
     def rand(am1, am2, j):
         Pam = (am1 + ' ' + am2)
@@ -31,3 +44,4 @@ def varrand(mas, b):
         z += 1
         x = 0
     return (itog)
+
