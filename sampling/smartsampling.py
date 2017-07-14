@@ -1,11 +1,8 @@
 from Bio.PDB import *
 from Bio.PDB.Structure import Structure
-from utils.calc import link
-from utils.utilits import letter
+from utils.utilits import *
 from geometry.transform import *
-import numpy
-
-
+import numpy,math
 
 def smartimposer(ta,structure,splice):
     for x in splice:
@@ -19,6 +16,7 @@ def smartimposer(ta,structure,splice):
                 v = r.get_vector()
                 cord = numpy.dot(v._ar,sp.rotran[0])+sp.rotran[1]
                 structure[y][r.get_name()].set_coord(cord)
+
     for x in splice:
         structure[x-1] = 0
     for x in splice:
@@ -52,7 +50,7 @@ def smartsamp(structure):
     """
     struct = list()
     splice = list()
-    indexcount = 0 # индекс структуры
+    indexcount = 0
     for counter in range(len(structure)):
         for x in structure[counter]:
             x.detach_parent()

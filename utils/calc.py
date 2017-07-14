@@ -1,16 +1,14 @@
-from numpy import linalg,dot
-from math import sqrt
-from Bio.PDB.Superimposer import *
-from Bio.PDB.Residue import Residue
-from Bio.PDB.Chain import Chain
-from utils.io import tta
+from numpy import *
+from math import *
+from Bio.PDB.Superimposer import Superimposer
+
 def distance(cordA,cordB):
     """
          Возвращает расстояние между точками в пространстве
          Параметры:
             cordA, cordB - координаты точек
     """
-    return sqrt(cordA[0]-cordB[0])**2+(cordA[1]-cordB[1])**2+(cordA[2]-cordB[2])**2)
+    return sqrt((cordA[0]-cordB[0])**2+(cordA[1]-cordB[1])**2+(cordA[2]-cordB[2])**2)
 
 def normalize(v):
     """
@@ -31,20 +29,11 @@ def imposer(structure,_leftAmino,_rightAmino):
             structure1 - петелька
             leftAmino,rightAmino - аминокислоты двух концов белка
     """
-    # first = 0
-    # last = len(structure1)-1
     leftAmino = _leftAmino.copy()
     rightAmino = _rightAmino.copy()
     leftAminoCDR = structure[0].copy()
     rightAminoCDR = structure[-1].copy()
     structure1 = [x.copy() for x in structure[1:-1]]
-    # structure1 = _structure1
-    #structure1 = _structure1.child_list
-    #structure1 = _structure1.copy()
-
-    # for x in structure1:
-    #     first = min(x.id[1],first)
-    #     last = max(x.id[1],last)
 
     Nc = leftAminoCDR['N']
     Cc = leftAminoCDR['C']
@@ -53,8 +42,7 @@ def imposer(structure,_leftAmino,_rightAmino):
     Ncf =  leftAmino['N']
     Ccf =  leftAmino['C']
     CAcf = leftAmino['CA']
-    #print(Nc.get_vector(),Ncf.get_vector())
-# IMPORTSER MODULE
+
     fixed_vectors = [Ncf,CAcf,Ccf]
     moving_vectors = [Nc,CAc,Cc]
     sup = Superimposer()
@@ -65,35 +53,14 @@ def imposer(structure,_leftAmino,_rightAmino):
             v = atom.get_vector()
             curcord = dot(v._ar, rotation_m) + transition_v
             atom.set_coord(curcord)
-# 1 SELECT RES ALIGN
-    # _leftAmino = leftAmino.copy()
-    # __leftAmino = leftAmino.copy()
-    # _leftAmino.__init__(structure1[first].id,__leftAmino.resname,__leftAmino.segid)
-    # structure1.__delitem__(first-1)
-    # print(first)
-    # structure1.insert(first,_leftAmino)
-    # cindex = 1
-
-    # cindex = 1
-    #
-    # for x in leftAmino:
-    #     x.detach_parent()
-    #     x.id = (' ',cindex,' ')
-    #     cindex+=1
-    #     structure1[first-1].add(x)
-
 
     Nc = rightAminoCDR['N']
     Cc = rightAminoCDR['C']
     CAc = rightAminoCDR['CA']
 
-    # print("struct1")
-    # for x in structure1:
-    #     print(x)
     Ncf = rightAmino['N']
     Ccf = rightAmino['C']
     CAcf = rightAmino['CA']
-
 
     fixed_vectors = [Nc,CAc,Cc]
     moving_vectors = [Ncf,CAcf,Ccf]
@@ -121,9 +88,6 @@ def rmsd(structure1,structure2):
     moving = []
     for x in structure2:
         moving.append(x['CA'].get_vector())
-    # sup = Superimposer()
-    # sup.set_atoms(fixed,moving)
-    # return sup.rms
 
     N = len(moving)
     preval = 0
@@ -148,6 +112,7 @@ def link(structure1,structure2):
     Cm = structure1['C']
     CAm = structure1['CA'].get_vector()
     Nm = structure1['N'].get_vector()
+
     fixed = [Cf,CAf,Nf]
     moving = [Cm,CAm,Nm]
     sup = Superimposer()
