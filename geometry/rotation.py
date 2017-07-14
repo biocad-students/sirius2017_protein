@@ -21,7 +21,7 @@ def quat_mul_quat(quat1, quat2):
 	quat, quat --> quat
 	qq' = [ vv' + wv' + w'v, ww' – v•v' ]
 	'''
-	res = vec_mult_vec(np.resize(quat1,3), np.resize(quat2,3)) + np.resize(quat1,3) * quat2[3] + np.resize(quat2,3) * quat1[3]
+	res = cross(np.resize(quat1,3), np.resize(quat2,3)) + np.resize(quat1,3) * quat2[3] + np.resize(quat2,3) * quat1[3]
 	res = np.resize(res,4)	
 	res[3] = quat1[3] * quat2[3] - np.dot(quat1, quat2)
 	return res
@@ -37,6 +37,35 @@ def vec_mult_vec(vec1, vec2):
 	vec[1] = vec1[2] * vec2[0] - vec1[0] * vec2[2]
 	vec[2] = vec1[0] * vec2[1] - vec1[1] * vec2[0]
 	return vec
+
+def matrix_axan_rotation(_veca,_vecb,_vecc, sinangle, cosangle):
+	"""
+        Вращение вектора на угол с заданным синусом и косинусом вокруг оси, заданной двумя точками
+        Параметры:
+            _veca,vecb - векторы оси вектора PDBшные
+            _vecc -  начальный вектор
+            sinangle - синус угла поворота
+            cosangle - косинус угла поворота
+	"""
+	veca = _veca.get_array()
+	vecb = _vecb.get_array()
+	vecc = _vecc.get_array()
+	
+	Z = vecb-veca
+	X = np.array([0.,0.,1])
+	Y = cross(Z, X)
+	X = cross(Z, Y)
+	#matrix = np.array([[X[0], Y[0], Z[0]],[[X[1], Y[1], Z[1]],[[X[2], Y[2], Z[2]]])
+	
+	
+	Eab = normalize(vecb - veca)
+	AC = vecc - veca
+	O = veca + Eab * dot(AC,Eab)
+	Eoc = normalize(vecc - O)
+	S = cross(Eab,Eoc)
+	OCd = distance(O,vecc)
+	M = Eoc * OCd * cosangle + S * OCd * sinangle + O
+	return M
 
 def calcnewcord(_veca,_vecb,_vecc, sinangle, cosangle):
     """
@@ -59,6 +88,7 @@ def calcnewcord(_veca,_vecb,_vecc, sinangle, cosangle):
     OCd = distance(O,vecc)
     M = Eoc * OCd * cosangle + S * OCd * sinangle + O
     return M
+   
 
 def rotate_vector(point1, point2, vec, angle):
 	'''

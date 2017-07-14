@@ -16,21 +16,6 @@ def arr(vec):  #Конвертация из Vector Biopython в array[3] numpy
 
 def get_intersection(dot1, dot2, vec): #Нахождение точки пересечения прямой (задаётся dot1 и dot2) и перпендикуляра из vec
 		return np.dot(vec - dot1, norm(dot2-dot1)) * norm(dot2-dot1) + dot1
-def do_rotation(loop, endpoint, res_index, char1, char2):
-	dot1 = loop[res_index][char1].get_vector()
-	dot2= loop[res_index][char2].get_vector()
-	O_points = np.array([get_intersection(arr(dot1),arr(dot2), arr(loop[-1][x].get_vector())) for x in ['N', 'CA', 'C']])	#Координаты точек пересечения осей и перпедикуляров из атомов последнего residue на них (Oi)
-	multipliers = np.array([np.linalg.norm(arr(loop[-1][x].get_vector()) - O_points[i2]) for i2,x in enumerate(['N','CA','C'])]) #|| OiM'i ||
-
-	c_diff = [vec_mult_vec(norm(loop[-1][x].get_vector() - O_points[i2]), norm(dot2-dot1)) for i2, x in enumerate(['N','CA','C'])]	#si
-
-	c_diff = [np.dot(c_diff[i2], arr(endpoint[x].get_vector()) - O_points[i2]) for i2, x in enumerate(['N','CA','C'])]	#si * OiFi
-
-	c = 2 * sum([multipliers[i] * c_diff[i] for i in range(3)]) #ci = -2 * (si * OiFi)
-
-	b_diff = [norm(loop[-1][x].get_vector() - O_points[i2]) for i2,x in enumerate(['N','CA','C'])]	# ri
-	b_diff = [np.dot(b_diff[i2], arr(endpoint[x].get_vector()) - O_points[i2]) for i2, x in enumerate(['N','CA','C'])]	#ri * OiFi
-	b = 2 * sum([multipliers[i] * b_diff[i] for i in range(3)]) #bi = -2 * (ri * OiFi)
 
 def calc_O(dot1, dot2, loop, char):
 	return get_intersection(arr(dot1),arr(dot2), arr(loop[-1][char].get_vector()))
@@ -38,16 +23,15 @@ def calc_O(dot1, dot2, loop, char):
 def calc_multiplier(loop, O_point, char):
 	return np.linalg.norm(arr(loop[-1][char].get_vector()) - O_point)
 
-def calc_c(loop, endpoint, dot1, dot2, multiplier, O_point, char):
-	c_diff = vec_mult_vec(norm(loop[-1][char].get_vector() - O_point), norm(dot2-dot1))	#si
+def calc_c(loop, endpoint, dot1, dot2, multiplier, O_point, char, diff):
+	c_diff = np.cross(diff, norm(dot2-dot1))	#si
 	c_diff = np.dot(c_diff, arr(endpoint[char].get_vector()) - O_point)	#si * OiFi
 
 	c = multiplier * c_diff #ci = -2 * (si * OiFi)
 	return c
 
-def calc_b(loop, endpoint, dot1, dot2, multiplier, O_point, char):
-	b_diff = norm(loop[-1][char].get_vector() - O_point)	# ri
-	b_diff = np.dot(b_diff, arr(endpoint[char].get_vector()) - O_point)	#ri * OiFi
+def calc_b(loop, endpoint, dot1, dot2, multiplier, O_point, char, diff):	# ri
+	b_diff = np.dot(diff, arr(endpoint[char].get_vector()) - O_point)	#ri * OiFi
 	b =  multiplier * b_diff #bi = -2 * (ri * OiFi)
 	return b
 
@@ -58,9 +42,10 @@ def do_rotation(loop, endpoint, res_index, char1, char2):
 	b, c = 0., 0.
 	for char in ['N','CA','C']:
 		O_point = calc_O(dot1, dot2, loop, char)
+		difference = norm(loop[-1][char].get_vector() - O_point)
 		multiplier = calc_multiplier(loop, O_point, char)
-		c += 2 * calc_c(loop, endpoint, dot1, dot2, multiplier, O_point, char)
-		b += 2 * calc_b(loop, endpoint, dot1, dot2, multiplier, O_point, char)
+		c += 2 * calc_c(loop, endpoint, dot1, dot2, multiplier, O_point, char, difference)
+		b += 2 * calc_b(loop, endpoint, dot1, dot2, multiplier, O_point, char, difference)
 	sqt = sqrt(b**2+c**2)
 
 	if char1 == 'N':
@@ -87,7 +72,6 @@ def CCD(loop, endpoint, feedback=False):
 		for i1, residue in enumerate(loop):
 			if i>0:	#Двигаем ото всех кроме первого residue
 				do_rotation(loop, endpoint, i1, 'N', 'CA') #Сначала φ-вращение
-
 				do_rotation(loop, endpoint, i1, 'CA', 'C') #Затем ψ-вращение
 
 		N_dist = get_align(loop, endpoint, 'N')
