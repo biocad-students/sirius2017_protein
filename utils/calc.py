@@ -10,7 +10,7 @@ def distance(cordA,cordB):
          Параметры:
             cordA, cordB - координаты точек
     """
-    return sqrt(pow(cordA[0]-cordB[0],2)+pow(cordA[1]-cordB[1],2)+pow(cordA[2]-cordB[2],2))
+    return sqrt(cordA[0]-cordB[0])**2+(cordA[1]-cordB[1])**2+(cordA[2]-cordB[2])**2)
 
 def normalize(v):
     """
@@ -21,7 +21,7 @@ def normalize(v):
     n = linalg.norm(v)
     if n == 0:
         return v
-    return v / linalg.norm(v)
+    return v / n
 
 
 def imposer(_structure1,res11,res12):
