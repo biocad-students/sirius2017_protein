@@ -29,8 +29,8 @@ from sampling.smartsampling import *
 
 # SMART SAMPLING
 #print("ssadads")
-a = read("../pdb/1.pdb")
-b = read("../pdb/2.pdb")
-c = read("../pdb/3.pdb")
-struct = smartsamp([c.child_list,b.child_list,a.child_list])
-writeres("out.pdb",struct)
+# a = read("../pdb/1.pdb")
+# b = read("../pdb/2.pdb")
+# c = read("../pdb/3.pdb")
+# struct = smartsamp([c.child_list,b.child_list,a.child_list])
+# writeres("out.pdb",struct)

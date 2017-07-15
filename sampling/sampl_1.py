@@ -26,13 +26,14 @@ def generate(s):
 def grad(angle):
     return angle*180/pi
 
-def rot1(amino,angle, O, C, N, H):
+def rot1(amino1,angle, O, C, N, H):
     """
         Поворот структуры вогрук оси С-N
         Параметры:
             amino - структура
             angle - угол поворота [pi,pi]
     """ # -2 из за заглушки
+    amino=amino1.copy()
     DIangle = angle-calc_dihedral(O,C,N,H)
     extra =  DIangle
     for atom in amino:
