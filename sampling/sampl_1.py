@@ -61,7 +61,7 @@ def move_dist(amino, dis, vec, A, B):
 def rotate_amino(amino, A, B, C, D, angle):
     """выставляет angle между A,B,D; C лежит в этой же плоскости"""
     print(A,B,C,D)
-    perp = cross(A - B, C - B)
+    perp = vec_mult_vec(A - B, C - B)
     angle -= calc_angle(A, B, D)
     perp[0] += B[0]
     perp[1] += B[1]
