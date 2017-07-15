@@ -24,10 +24,10 @@ from sampling.sampl_1 import samples
 
 IssmartWork = True
 IsDebugReq = False
-THREADNUM = 4
+THREADNUM = 1
 COUNT = 10
-regionPath = "../sirius_out/regions.txt"
-structsPath = "../sirius_out/"
+regionPath = "../../../Desktop/sirius_out/regions.txt"
+structsPath = "../../../Desktop/sirius_out/"
 folderwithresult = "result/"
 
 
@@ -43,7 +43,7 @@ def debugI(name,structure):
 def preparing():
 
     print("Booting settings:\nIssmartWork {}\n IsDebugReq {}\n count {}".format(IssmartWork,IsDebugReq,COUNT))
-    os.mkdir(folderwithresult)
+    os.system("mkdir -p "+folderwithresult)
     try:
         file = open((folderwithresult+"info.log"),"w")
         file.write("Sys info:")
@@ -76,12 +76,10 @@ def preparing():
         print("new thread: #",n," with range [",calcpos,",",calcpos+lengthP,"]\n")
         threads.append(multiprocessing.Process(target=Work,args = (cdr3,round(calcpos),round(calcpos+lengthP))))
         calcpos+=lengthP
-
     for thrd in threads:
         thrd.start()
     for thrd in threads:
         thrd.join()
-
 
 def Work(cdr3,calcstart,calcstop):
     print("Booting thread #",os.getpid())
@@ -134,17 +132,4 @@ def Work(cdr3,calcstart,calcstop):
                     secondPart = ourres[cdr3[counter][2]:]
                     chainArray = firstPart+afterCCD[1:-1]+secondPart
                     writeres(folderwithresult+directory+str(instance)+".pdb",chainArray)
-# def timetest():
-#     time = timeit.Timer(setup=smartWork).repeat(10)
-#     summ = 0
-#     for x in time:
-#         summ+=x
-#     print(summ/len(time))
-# timetest()
 preparing()
-# ОПТИМИЗАЦИИ
-# 0.015892415899725166 - 1 результат
-# 0.015419271100472542 - убрал pow
-# 0.016497708200040505 - убрали библиотеки
-# 0.01711203030008619 - красиво сделал
-# 0.015177678400141304 - изменил все функции на * в модулях

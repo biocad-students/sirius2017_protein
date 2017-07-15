@@ -9,9 +9,5 @@ path = "../pdb/3-stor/"
 def getresidue(name):
     return read(path+name+".pdb")
 
-
-a = getresidue('ASG')
-b = getresidue('SGA')
-c = getresidue('AYL')
-result = cleversamp([[a],[b],[c]])
+result = cleversamp('ADKAS')
 writeres("out.pdb",result)
