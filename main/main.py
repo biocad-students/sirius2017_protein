@@ -1,6 +1,6 @@
 from Bio.PDB import *
-import sys
-import os
+import os,sys,platform
+import multiprocessing
 sys.path.append("../")
 # from utils.io import read,writeres
 # from utils.calc import imposer
@@ -21,30 +21,39 @@ from sampling.smartsampling import *
 from Bio.PDB.Chain import Chain
 from algo.CCD import *
 from sampling.sampl_1 import samples
-import timeit
 
 IssmartWork = True
 IsDebugReq = False
+THREADNUM = 4
 COUNT = 10
+regionPath = "../sirius_out/regions.txt"
+structsPath = "../sirius_out/"
+folderwithresult = "result/"
+
 
 def debugI(name,structure):
     if(IsDebugReq):
-        file = open("debug.log","a")
-        file.write(name)
+        print(name)
         try:
             for x in structure:
-                file.write(x)
+                print(x)
         except:
-                file.write(str(structure))
-        file.write("\n\n")
+                print(str(structure))
 
-def Work():
+def preparing():
+
     print("Booting settings:\nIssmartWork {}\n IsDebugReq {}\n count {}".format(IssmartWork,IsDebugReq,COUNT))
-    regionPath = "../sirius_out/regions.txt"
-    structsPath = "../sirius_out/"
-
-    folderwithresult = "result/"
     os.mkdir(folderwithresult)
+    try:
+        file = open((folderwithresult+"info.log"),"w")
+        file.write("Sys info:")
+        file.write(str(platform.processor())+"\n")
+        file.write(str(platform.machine())+"#"+"\n")
+        file.write(str(platform.uname()))
+        file.write("\nWe running:"+str(THREADNUM)+"\nNumber of files:"+str(COUNT))
+        file.close()
+    except:
+        pass
     cdr3 = []
     file1 = open(regionPath, "r")
     _tmp = file1.read()
@@ -58,8 +67,26 @@ def Work():
         cordstart = len(tmp[x][1]+tmp[x][2]+tmp[x][3]+tmp[x][4]+tmp[x][5])
         cordstop = cordstart+len(tmp[x][6])
         cdr3.append([tmp[x][0],cordstart,cordstop])
+
+    threads = []
+    lengthP = (len(tmp)+1)/THREADNUM
+    calcpos = 0
+
+    for n in range(THREADNUM):
+        print("new thread: #",n," with range [",calcpos,",",calcpos+lengthP,"]\n")
+        threads.append(multiprocessing.Process(target=Work,args = (cdr3,round(calcpos),round(calcpos+lengthP))))
+        calcpos+=lengthP
+
+    for thrd in threads:
+        thrd.start()
+    for thrd in threads:
+        thrd.join()
+
+
+def Work(cdr3,calcstart,calcstop):
+    print("Booting thread #",os.getpid())
 ## MAIN PROGRAM ##
-    for counter in range(9,len(tmp)):
+    for counter in range(calcstart,calcstop):
         ourpdb = read(structsPath+str(cdr3[counter][0])+".pdb")
         ourres = ourpdb.child_list
         ourchain = Chain(0)
@@ -67,6 +94,7 @@ def Work():
         lastRes =  ourres[cdr3[counter][2]]
         for x in range(cdr3[counter][1]-1,cdr3[counter][2]+1):
                 ourchain.add(ourres[x])
+        print("Working with ",cdr3[counter])
         # 1 STEP
         letterList = [letter(x) for x in ourchain.child_list]
         os.mkdir(folderwithresult+str(cdr3[counter][0]))
@@ -113,8 +141,7 @@ def Work():
 #         summ+=x
 #     print(summ/len(time))
 # timetest()
-Work()
-
+preparing()
 # ОПТИМИЗАЦИИ
 # 0.015892415899725166 - 1 результат
 # 0.015419271100472542 - убрал pow

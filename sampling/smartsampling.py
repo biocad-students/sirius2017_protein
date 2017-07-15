@@ -36,7 +36,6 @@ def smartimposer(ta,structure,splice):
     structure = _structure
     for x in range(1,len(structure)):
         if(letter(structure[x]) != 'P'):
-            writeres("before"+str(x)+".pdb",structure)
             O = structure[x-1]['O'].get_vector()
             C = structure[x-1]['C'].get_vector()
             N = structure[x]['N'].get_vector()
@@ -52,7 +51,6 @@ def smartimposer(ta,structure,splice):
                 Ci = calcnewcord(N,N+vertical,C,math.radians(120))
                 Hnew = normalize(Ci-N.get_array())*Dnh + N.get_array()
                 structure[x]['H'].set_coord(Hnew)
-                writeres("afterH"+str(x)+"_"+structure[x].get_resname()+".pdb",structure)
 
     return structure
 
@@ -77,3 +75,22 @@ def smartsamp(structure):
 
     struct = smartimposer(structure,struct,splice)
     return struct
+
+
+def cleversamp(structure):
+    """
+        3 вариант сэмплирования
+        Параметры:
+            structure - список списков 3-меров
+    """
+    for alpha in structure[0]:
+        for beta in structure[1]:
+            for gamma in structure[2]:
+                fixed = [alpha['N'],alpha['CA'],alpha['C']]
+                moving = [beta['N'],beta['CA'],beta['C']]
+                sp = Superimposer()
+                sp.set_atoms(fixed,moving)
+                
+                        v = r.get_vector()
+                        cord = numpy.dot(v._ar,sp.rotran[0])+sp.rotran[1]
+                        structure[y][r.get_name()].set_coord(cord)
