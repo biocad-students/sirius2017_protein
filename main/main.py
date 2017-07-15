@@ -2,15 +2,6 @@ from Bio.PDB import *
 import os,sys,platform
 import multiprocessing
 sys.path.append("../")
-# from utils.io import read,writeres
-# from utils.calc import imposer
-# from utils.strstr import loopSubstring
-# from utils.utilits import letter
-# from utils.withdraw import get_residues_by_pos
-# from sampling.smartsampling import smartsamp
-# from Bio.PDB.Chain import Chain
-# from algo.CCD import CCD
-# import timeit
 
 from utils.io import *
 from utils.calc import *
