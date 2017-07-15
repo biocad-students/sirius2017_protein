@@ -25,6 +25,7 @@ from sampling.smartsampling import *
 
 # FINAL TEST
 #final_check("../../../Desktop/test_rmsd/regions.txt","../../../Desktop/test_rmsd/source/","../../../Desktop/test_rmsd/result/","../../../Desktop/result.txt")
+#final_check("../../../Desktop/regions.txt","../sirius_out/","../../../Desktop/out/","../../../Desktop/result.txt")
 
 # SMART SAMPLING
 #print("ssadads")

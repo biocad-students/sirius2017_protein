@@ -2,8 +2,11 @@ from Bio.PDB import *
 from Bio.PDB.Structure import Structure
 from utils.utilits import *
 from geometry.transform import *
-from sampling.sampl1 import 
+from sampling.sampl_1 import rot1
 import numpy,math
+
+
+from utils.io import *
 
 def smartimposer(ta,structure,splice):
     for x in splice:
@@ -39,7 +42,15 @@ def smartimposer(ta,structure,splice):
             H = structure[x]['H'].get_vector()
             angle = calc_dihedral(O,C,N,H)
             if(abs(angle)<math.radians(160)):
-                structure = rot(structure,math.pi-angle,x,0)
+                N = structure[x]['N'].get_vector()
+                H = structure[x]['H'].get_vector()
+                Vnc = O-N
+                Vnh = C-N
+                Dnh = distance(N,H)
+                vertical = numpy.cross(Vnc.get_array(),Vnh.get_array())
+                Ci = calcnewcord(N,N+vertical,C,math.radians(120))
+                Hnew = normalize(Ci-N.get_array())*Dnh + N.get_array()
+                structure[x]['H'].set_coord(Hnew)
 
     return structure
 
@@ -64,3 +75,35 @@ def smartsamp(structure):
 
     struct = smartimposer(structure,struct,splice)
     return struct
+
+#
+# def cleversamp(structure):
+#     """
+#         3 вариант сэмплирования
+#         Параметры:
+#             structure - список списков 3-меров
+#     """
+#     first = 1
+#     for alpha in structure[0]:
+#         for beta in structure[1]:
+#             for gamma in structure[2]:
+#                 if(first):
+#                 fixed = [alpha[2]['N'],alpha[2]['CA'],alpha[2]['C']]
+#                 moving = [beta[0]['N'],beta[0]['CA'],beta[0]['C']]
+#                 sp = Superimposer()
+#                 sp.set_atoms(fixed,moving)
+#                 for residue in beta:
+#                     for atom in residue:
+#                         v = r.get_vector()
+#                         cord = numpy.dot(v._ar,sp.rotran[0])+sp.rotran[1]
+#                         structure[y][r.get_name()].set_coord(cord)
+#
+#                 fixed = [beta[2]['N'],beta[2]['CA'],beta[2]['C']]
+#                 moving = [gamma[0]['N'],gamma[0]['CA'],gamma[0]['C']]
+#                 sp = Superimposer()
+#                 sp.set_atoms(fixed,moving)
+#                 for residue in beta:
+#                     for atom in residue:
+#                         v = r.get_vector()
+#                         cord = numpy.dot(v._ar,sp.rotran[0])+sp.rotran[1]
+#                         structure[y][r.get_name()].set_coord(cord)

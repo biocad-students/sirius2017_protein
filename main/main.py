@@ -1,6 +1,6 @@
 from Bio.PDB import *
-import sys
-import os
+import os,sys,platform
+import multiprocessing
 sys.path.append("../")
 # from utils.io import read,writeres
 # from utils.calc import imposer
@@ -20,27 +20,40 @@ from utils.withdraw import *
 from sampling.smartsampling import *
 from Bio.PDB.Chain import Chain
 from algo.CCD import *
-import timeit
+from sampling.sampl_1 import samples
 
+IssmartWork = True
 IsDebugReq = False
+THREADNUM = 4
+COUNT = 10
+regionPath = "../sirius_out/regions.txt"
+structsPath = "../sirius_out/"
+folderwithresult = "result/"
+
 
 def debugI(name,structure):
     if(IsDebugReq):
-        file = open("debug.log","a")
-        file.write(name)
+        print(name)
         try:
             for x in structure:
-                file.write(x)
+                print(x)
         except:
-                file.write(structure)
-        file.write("\n\n")
+                print(str(structure))
 
-def smartWork():
-    regionPath = "../sirius_out/regions.txt"
-    structsPath = "../sirius_out/"
+def preparing():
 
-    folderwithresult = "result/"
+    print("Booting settings:\nIssmartWork {}\n IsDebugReq {}\n count {}".format(IssmartWork,IsDebugReq,COUNT))
     os.mkdir(folderwithresult)
+    try:
+        file = open((folderwithresult+"info.log"),"w")
+        file.write("Sys info:")
+        file.write(str(platform.processor())+"\n")
+        file.write(str(platform.machine())+"#"+"\n")
+        file.write(str(platform.uname()))
+        file.write("\nWe running:"+str(THREADNUM)+"\nNumber of files:"+str(COUNT))
+        file.close()
+    except:
+        pass
     cdr3 = []
     file1 = open(regionPath, "r")
     _tmp = file1.read()
@@ -49,12 +62,31 @@ def smartWork():
     tmp = []
     for x in lines:
         tmp.append(x.split(' '))
-    for x in range(0,2):
+
+    for x in range(len(tmp)):
         cordstart = len(tmp[x][1]+tmp[x][2]+tmp[x][3]+tmp[x][4]+tmp[x][5])
         cordstop = cordstart+len(tmp[x][6])
         cdr3.append([tmp[x][0],cordstart,cordstop])
-    #for counter in range(0,len(cdr3)):
-    for counter in range(2):
+
+    threads = []
+    lengthP = (len(tmp)+1)/THREADNUM
+    calcpos = 0
+
+    for n in range(THREADNUM):
+        print("new thread: #",n," with range [",calcpos,",",calcpos+lengthP,"]\n")
+        threads.append(multiprocessing.Process(target=Work,args = (cdr3,round(calcpos),round(calcpos+lengthP))))
+        calcpos+=lengthP
+
+    for thrd in threads:
+        thrd.start()
+    for thrd in threads:
+        thrd.join()
+
+
+def Work(cdr3,calcstart,calcstop):
+    print("Booting thread #",os.getpid())
+## MAIN PROGRAM ##
+    for counter in range(calcstart,calcstop):
         ourpdb = read(structsPath+str(cdr3[counter][0])+".pdb")
         ourres = ourpdb.child_list
         ourchain = Chain(0)
@@ -62,41 +94,46 @@ def smartWork():
         lastRes =  ourres[cdr3[counter][2]]
         for x in range(cdr3[counter][1]-1,cdr3[counter][2]+1):
                 ourchain.add(ourres[x])
+        print("Working with ",cdr3[counter])
         # 1 STEP
         letterList = [letter(x) for x in ourchain.child_list]
-        _preSub = loopSubstring(''.join(letterList),10,cdr3[counter][0])
         os.mkdir(folderwithresult+str(cdr3[counter][0]))
-        for fileenum in range(len(_preSub)):
-            directory = str(cdr3[counter][0])+"/"
-            # Собирает цепочки по буквам
-            sub = get_residues_by_pos(_preSub[fileenum])
-            for i in range(len(sub)):
-                debugI(str(i), sub[i])
-            # Соединяет цепокич в одну
-            merged = smartsamp(sub)
-            debugI("merged",merged)
-            combined = imposer(merged,firstRes,lastRes)
-            debugI("combined",combined)
-            #5 CCD
-            afterCCD = CCD(combined,lastRes)
-            # 6 скл
-            firstPart = ourres[0:cdr3[counter][1]]
-            secondPart = ourres[cdr3[counter][2]:]
-            chainArray = firstPart+afterCCD[1:-1]+secondPart
-            writeres(folderwithresult+directory+str(fileenum)+".pdb",chainArray)
+        if(IssmartWork):
+            _preSub = loopSubstring(''.join(letterList),COUNT,cdr3[counter][0])
+            for fileenum in range(len(_preSub)):
+                directory = str(cdr3[counter][0])+"/"
+                # Собирает цепочки по буквам
+                sub = get_residues_by_pos(_preSub[fileenum])
+                for i in range(len(sub)):
+                    debugI(str(i), sub[i])
+                # Соединяет цепокич в одну
+                merged = smartsamp(sub)
+                debugI("merged",merged)
+                combined = imposer(merged,firstRes,lastRes)
+                debugI("combined",combined)
+                #5 CCD
+                afterCCD = CCD(combined,lastRes)
+                # 6 скл
+                firstPart = ourres[0:cdr3[counter][1]]
+                secondPart = ourres[cdr3[counter][2]:]
+                chainArray = firstPart+afterCCD[1:-1]+secondPart
+                writeres(folderwithresult+directory+str(fileenum)+".pdb",chainArray)
+        else:
+                sa = samples(letterList,2)
+                directory = str(cdr3[counter][0])+"/"
+                for instance in range(len(sa)):
+                    index = 0
+                    print(type(sa),type(sa[0]))
 
-
-
-def defaultWork():
-    # Данные
-
-
-    # Паша
-
-
-    #Люда
-
-    pass
+                    combined = imposer(sa[instance],firstRes,lastRes)
+                    debugI("combined",combined)
+                    #5 CCD
+                    afterCCD = CCD(combined,lastRes,True)
+                    # 6 скл
+                    firstPart = ourres[0:cdr3[counter][1]]
+                    secondPart = ourres[cdr3[counter][2]:]
+                    chainArray = firstPart+afterCCD[1:-1]+secondPart
+                    writeres(folderwithresult+directory+str(instance)+".pdb",chainArray)
 # def timetest():
 #     time = timeit.Timer(setup=smartWork).repeat(10)
 #     summ = 0
@@ -104,8 +141,7 @@ def defaultWork():
 #         summ+=x
 #     print(summ/len(time))
 # timetest()
-smartWork()
-
+preparing()
 # ОПТИМИЗАЦИИ
 # 0.015892415899725166 - 1 результат
 # 0.015419271100472542 - убрал pow
