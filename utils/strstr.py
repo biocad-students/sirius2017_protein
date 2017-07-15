@@ -23,7 +23,7 @@ def maxSubstring(string1, string2, lenner): #Максимальная общая
 					maxpos = (i,j,matrix[i,j]- lenner)
 	return maxpos[0] - maxpos[2], maxpos[1] - maxpos[2], maxpos[2]
 
-def loopSubstring(to_parse, var_number, hidden_num=None, prefix='../sirius_out/'):
+def loopSubstring(to_parse, var_number, hidden_num=None, prefix='../sirius_out/',prefixLoc='../files/'):
 	'''
 		loopSubstring(to_parse, var_number, hidden_num=None, prefix=\'../sirius_out/\')
 		Возвращает var_number вариантов разбиения to_parce на подстроки из БД петель
@@ -34,7 +34,7 @@ def loopSubstring(to_parse, var_number, hidden_num=None, prefix='../sirius_out/'
 	f = open(prefix + 'regions.txt', 'r')
 	loops = f.read()
 	f.close()
-	f = open(prefix + 'ids.txt', 'r')
+	f = open(prefixLoc + 'ids.txt', 'r')
 	ids = f.read().split()
 	f.close()
 	if hidden_num:		#Прячем "скрытый номер"

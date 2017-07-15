@@ -13,9 +13,9 @@ from Bio.PDB.Chain import Chain
 from algo.CCD import *
 from sampling.sampl_1 import samples
 
-IssmartWork = False
+IssmartWork = True
 IsDebugReq = False
-THREADNUM = 3
+THREADNUM = 1
 COUNT = 10
 regionPath = "../../../Desktop/sirius_out/regions.txt"
 structsPath = "../../../Desktop/sirius_out/"
@@ -86,7 +86,7 @@ def Work(cdr3,calcstart,calcstop):
             for fileenum in range(len(_preSub)):
                 directory = str(cdr3[counter][0])+"/"
                 # Собирает цепочки по буквам
-                sub = get_residues_by_pos(_preSub[fileenum],structsPath)
+                sub = get_residues_by_pos(_preSub[fileenum],prefix = structsPath)
                 for i in range(len(sub)):
                     debugI(str(i), sub[i])
                 # Соединяет цепокич в одну
@@ -102,7 +102,7 @@ def Work(cdr3,calcstart,calcstop):
                 chainArray = firstPart+afterCCD[1:-1]+secondPart
                 writeres(folderwithresult+directory+str(fileenum)+".pdb",chainArray)
         else:
-            sa = samples(letterList,2)
+            sa = samples(letterList,COUNT)
             directory = str(cdr3[counter][0])+"/"
             for instance in range(len(sa)):
                 index = 0

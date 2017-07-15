@@ -18,7 +18,7 @@ def smartimposer(ta,structure,splice):
                 v = r.get_vector()
                 cord = numpy.dot(v._ar,sp.rotran[0])+sp.rotran[1]
                 structure[y][r.get_name()].set_coord(cord)
-        writeres(str(splice)+".pdb",structure)
+            writeres("RRR"+str(splice)+".pdb",structure)
     for x in splice:
         structure[x-1] = 0
     for x in splice:
