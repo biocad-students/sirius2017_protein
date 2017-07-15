@@ -57,7 +57,7 @@ def do_rotation(loop, endpoint, res_index, char1, char2):
 	else:
 		residues = [[loop[res_index]['O']]]	#φ-вращение
 	residues = residues + loop[res_index+1:]	#ψ-вращение
-	Eab = normalize(arr(dot2 - dot1))
+
 	angle = atan2(-c/sqt,b/sqt)
 	sind = sin(angle/2)
 	cosd = cos(angle/2)
@@ -73,7 +73,7 @@ def do_rotation(loop, endpoint, res_index, char1, char2):
 			#atom.set_coord(calcnewcord(dot1, dot2, coord, -c/sqt,b/sqt,Eab))
 
 
-def CCD(loop, endpoint, feedback=False):
+def CCD(loop, endpoint, feedback=False, save_every_loop=False):
 	if feedback: #Отладочная информация
 		N_dist = get_align(loop, endpoint, 'N')
 		CA_dist = get_align(loop, endpoint, 'CA')
@@ -86,7 +86,7 @@ def CCD(loop, endpoint, feedback=False):
 			if i>0:	#Двигаем ото всех кроме первого residue
 				do_rotation(loop, endpoint, i1, 'N', 'CA') #Сначала φ-вращение
 				do_rotation(loop, endpoint, i1, 'CA', 'C') #Затем ψ-вращение
-
+				
 		N_dist = get_align(loop, endpoint, 'N')
 		CA_dist = get_align(loop, endpoint, 'CA')
 		C_dist = get_align(loop, endpoint, 'C')

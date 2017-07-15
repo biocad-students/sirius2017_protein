@@ -22,7 +22,7 @@ from Bio.PDB.Chain import Chain
 from algo.CCD import *
 from sampling.sampl_1 import samples
 
-IssmartWork = True
+IssmartWork = False
 IsDebugReq = False
 THREADNUM = 1
 COUNT = 10
