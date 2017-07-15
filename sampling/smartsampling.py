@@ -4,8 +4,6 @@ from utils.utilits import *
 from geometry.transform import *
 from sampling.sampl_1 import rot1
 import numpy,math
-
-
 from utils.io import *
 
 def smartimposer(ta,structure,splice):

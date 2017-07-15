@@ -63,7 +63,6 @@ def preparing():
     tmp = []
     for x in lines:
         tmp.append(x.split(' '))
-=======
 	print("Booting settings:\nIssmartWork {}\n IsDebugReq {}\n count {}".format(IssmartWork,IsDebugReq,COUNT))
 	os.mkdir(folderwithresult)
 	try:
@@ -84,7 +83,6 @@ def preparing():
 			cordstop = cordstart+len(string[6])
 			cdr3.append([string[0],cordstart,cordstop])
 			string = f.readline().split()
->>>>>>> 576cab89024a251a0e6a567ed7125770d8e158f4
 
 	threads = []
 	lengthP = (len(cdr3)+1)/THREADNUM
@@ -145,7 +143,6 @@ def Work(cdr3,calcstart,calcstop):
 					index = 0
 					print(type(sa),type(sa[0]))
 
-<<<<<<< HEAD
                     combined = imposer(sa[instance],firstRes,lastRes)
                     debugI("combined",combined)
                     #5 CCD
@@ -155,7 +152,6 @@ def Work(cdr3,calcstart,calcstop):
                     secondPart = ourres[cdr3[counter][2]:]
                     chainArray = firstPart+afterCCD[1:-1]+secondPart
                     writeres(folderwithresult+directory+str(instance)+".pdb",chainArray)
-=======
 					combined = imposer(sa[instance],firstRes,lastRes)
 					debugI("combined",combined)
 					#5 CCD
@@ -172,5 +168,4 @@ def Work(cdr3,calcstart,calcstop):
 #		 summ+=x
 #	 print(summ/len(time))
 # timetest()
->>>>>>> 576cab89024a251a0e6a567ed7125770d8e158f4
 preparing()
