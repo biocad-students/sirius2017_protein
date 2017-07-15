@@ -6,5 +6,4 @@ debug/examples
 params/.ipynb_checkpoints
 sampling/__pycache__/
 .idea/
-sirius_out/regions.txt
 params/__pycache__/params_sr3.cpython-36.pyc

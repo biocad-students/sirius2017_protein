@@ -1,7 +1,7 @@
 import numpy as np
 from Bio import PDB as pdb
-from geometry.rotation import rotate_vector, vec_mult_vec, calcnewcord, matrix_axan_rotation
-from math import sqrt
+from geometry.quaternion import Quaternion as Quat
+from math import sqrt, atan2, sin, cos
 from utils.calc import normalize
 
 lst = list
@@ -58,12 +58,19 @@ def do_rotation(loop, endpoint, res_index, char1, char2):
 		residues = [[loop[res_index]['O']]]	#φ-вращение
 	residues = residues + loop[res_index+1:]	#ψ-вращение
 	Eab = normalize(arr(dot2 - dot1))
+	angle = atan2(-c/sqt,b/sqt)
+	sind = sin(angle/2)
+	cosd = cos(angle/2)
+
+	dot1, dot2 = dot1.get_array(), dot2.get_array()
+	q = Quat.from_axistrig(sind, cosd, dot2-dot1)
 	for res in residues:
 		for atom in res:
-			coord = atom.get_vector()
+			coord = atom.get_vector().get_array()
+			atom.set_coord(q * (coord - dot1)+dot1)
 			#atom.set_coord(matrix_axan_rotation(norm(dot2-dot1), coord, -c/sqt,b/sqt, Eab#))
-			
-			atom.set_coord(calcnewcord(dot1, dot2, coord, -c/sqt,b/sqt, Eab))
+			#atom.set_coord(cpp_rot(dot1, dot2, coord, -c/sqt, b/sqt, Eab))
+			#atom.set_coord(calcnewcord(dot1, dot2, coord, -c/sqt,b/sqt,Eab))
 
 
 def CCD(loop, endpoint, feedback=False):
