@@ -86,7 +86,7 @@ def CCD(loop, endpoint, feedback=False, save_every_loop=False):
 			if i>0:	#Двигаем ото всех кроме первого residue
 				do_rotation(loop, endpoint, i1, 'N', 'CA') #Сначала φ-вращение
 				do_rotation(loop, endpoint, i1, 'CA', 'C') #Затем ψ-вращение
-				
+
 		N_dist = get_align(loop, endpoint, 'N')
 		CA_dist = get_align(loop, endpoint, 'CA')
 		C_dist = get_align(loop, endpoint, 'C')

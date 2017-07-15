@@ -15,7 +15,7 @@ from sampling.sampl_1 import samples
 
 IssmartWork = False
 IsDebugReq = False
-THREADNUM = 1
+THREADNUM = 3
 COUNT = 10
 regionPath = "../../../Desktop/sirius_out/regions.txt"
 structsPath = "../../../Desktop/sirius_out/"
@@ -57,14 +57,10 @@ def preparing():
     calcpos = 0
 
     for n in range(THREADNUM):
-        print("new thread: #",n," with range [",calcpos,",",calcpos+lengthP,"]\n")
+        print("new thread: #",n," with range [",round(calcpos),",",round(calcpos+lengthP),"]\n")
         threads.append(multiprocessing.Process(target=Work,args = (cdr3,round(calcpos),round(calcpos+lengthP))))
         calcpos+=lengthP
 
-    for n in range(THREADNUM):
-        print("new thread: #",n," with range [",calcpos,",",calcpos+lengthP,"]\n")
-        threads.append(multiprocessing.Process(target=Work,args = (cdr3,round(calcpos),round(calcpos+lengthP))))
-        calcpos+=lengthP
     for thrd in threads:
         thrd.start()
     for thrd in threads:
@@ -99,7 +95,7 @@ def Work(cdr3,calcstart,calcstop):
                 combined = imposer(merged,firstRes,lastRes)
                 debugI("combined",combined)
                 #5 CCD
-                afterCCD = CCD(combined,lastRes)
+                afterCCD = CCD(combined,lastRes,feedback = False)
                 # 6 скл
                 firstPart = ourres[0:cdr3[counter][1]]
                 secondPart = ourres[cdr3[counter][2]:]
@@ -110,21 +106,10 @@ def Work(cdr3,calcstart,calcstop):
             directory = str(cdr3[counter][0])+"/"
             for instance in range(len(sa)):
                 index = 0
-                print(type(sa),type(sa[0]))
-
                 combined = imposer(sa[instance],firstRes,lastRes)
                 debugI("combined",combined)
                 #5 CCD
-                afterCCD = CCD(combined,lastRes,True)
-                # 6 скл
-                firstPart = ourres[0:cdr3[counter][1]]
-                secondPart = ourres[cdr3[counter][2]:]
-                chainArray = firstPart+afterCCD[1:-1]+secondPart
-                writeres(folderwithresult+directory+str(instance)+".pdb",chainArray)
-                combined = imposer(sa[instance],firstRes,lastRes)
-                debugI("combined",combined)
-                #5 CCD
-                afterCCD = CCD(combined,lastRes,True)
+                afterCCD = CCD(combined,lastRes,feedback = False)
                 # 6 скл
                 firstPart = ourres[0:cdr3[counter][1]]
                 secondPart = ourres[cdr3[counter][2]:]
