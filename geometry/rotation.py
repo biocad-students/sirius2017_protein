@@ -38,25 +38,81 @@ def vec_mult_vec(vec1, vec2):
 	vec[2] = vec1[0] * vec2[1] - vec1[1] * vec2[0]
 	return vec
 
-def matrix_axan_rotation(_veca,_vecb,_vecc, sinangle, cosangle):
+
+##def get_rot_matrix(axis, c, s):
+#	"""
+#        Генерация матрицы поворота вокруг заданной оси на угол с заданными синусом и косинусом
+#        Параметры:
+#            axis - вектор оси
+#            c -  косинус угла поворота
+#            s - синус угла поворота
+#    	"""
+#    	#axis = axis/math.sqrt(np.dot(axis, axis))
+#	pass
+	
+
+#def euler_rod_rotation(_veca,_vecb,_vecc, sinangle, cosangle):
+#    """
+#        Вращение вектора на угол с заданным синусом и косинусом вокруг оси, заданной двумя точками
+#        Параметры:
+#            _veca,vecb - векторы оси вектора PDBшные
+#            _vecc -  начальный вектор
+#            sinangle - синус угла поворота
+#            cosangle - косинус угла поворота
+#    """
+#    veca = _veca.get_array()
+#    vecb = _vecb.get_array()
+#    vecc = _vecc.get_array()
+
+
+
+#def rod_calcnewcord(_veca,_vecb,_vecc, sinangle, cosangle):
+#    """
+#        Вращение вектора на угол с заданным синусом и косинусом вокруг оси, заданной двумя точками
+#        Параметры:
+#            _veca,vecb - векторы оси вектора PDBшные
+#            _vecc -  начальный вектор
+#            sinangle - синус угла поворота
+#            cosangle - косинус угла поворота
+#    """
+#	veca = _veca.get_array()
+#    	vecb = _vecb.get_array()
+#    	vecc = _vecc.get_array()
+#	rot_vec = vecb - veca
+#	roted_vec = vecc - veca
+	
+
+
+
+def matrix_axan_rotation(vec,_vecc, s, c):
 	"""
         Вращение вектора на угол с заданным синусом и косинусом вокруг оси, заданной двумя точками
         Параметры:
             _veca,vecb - векторы оси вектора PDBшные
             _vecc -  начальный вектор
-            sinangle - синус угла поворота
-            cosangle - косинус угла поворота
+            s - синус угла поворота
+            c - косинус угла поворота
 	"""
-	veca = _veca.get_array()
-	vecb = _vecb.get_array()
+
+
 	vecc = _vecc.get_array()
 	
-	Z = vecb-veca
-	X = np.array([0.,0.,1])
-	Y = cross(Z, X)
-	X = cross(Z, Y)
-	#matrix = np.array([[X[0], Y[0], Z[0]],[[X[1], Y[1], Z[1]],[[X[2], Y[2], Z[2]]])
-	
+	x, y, z = vec[0], vec[1], vec[2]
+	vecca = vecc - vec
+	rvec = np.array([[vecca[0]], [vecca[1]], [vecca[2]]])
+	#matrix = np.array([ 
+	#[cosangle + (1 - cosangle) * x**2, (1-cosangle)*x*y-(sinangle*z), (1-cosangle)*x*z+sinangle*y],
+	#[(1 - cosangle)*y*x + sinangle*z, cosangle + (1 - cosangle) * y **2, (1-cosangle)*y*z - sinangle*x],
+	#[(1 - cosangle)*z*x - sinangle*y, (1-cosangle)*y*z + sinangle*x, cosangle + (1-cosangle)*z**2]
+	#])
+	c1 = 1 - c
+	matrix = np.array([
+	[x**2+c, x*y*c1 - z*s, x*z*c1+y*s],
+	[x*y*c1 + z*s, y*y*c1+c, y*z*c1-x*s],
+	[x*z*c1 - y*s, x*z*c1 + x*s, z*z*c1 + c]
+	])
+	print(distance(vec, vecc), distance(vec, np.transpose(matrix @ rvec)[0]))
+	return np.transpose(matrix @ rvec)[0] + vecc
 	
 	Eab = normalize(vecb - veca)
 	AC = vecc - veca
@@ -66,8 +122,8 @@ def matrix_axan_rotation(_veca,_vecb,_vecc, sinangle, cosangle):
 	OCd = distance(O,vecc)
 	M = Eoc * OCd * cosangle + S * OCd * sinangle + O
 	return M
-
-def calcnewcord(_veca,_vecb,_vecc, sinangle, cosangle):
+cs = cross
+def calcnewcord(_veca,_vecb,_vecc, sinangle, cosangle, Eab):
     """
         Вращение вектора на угол с заданным синусом и косинусом вокруг оси, заданной двумя точками
         Параметры:
@@ -80,11 +136,11 @@ def calcnewcord(_veca,_vecb,_vecc, sinangle, cosangle):
     vecb = _vecb.get_array()
     vecc = _vecc.get_array()
 
-    Eab = normalize(vecb - veca)
+   # Eab = normalize(vecb - veca)
     AC = vecc - veca
     O = veca + Eab * dot(AC,Eab)
     Eoc = normalize(vecc - O)
-    S = cross(Eab,Eoc)
+    S = cs(Eab,Eoc)
     OCd = distance(O,vecc)
     M = Eoc * OCd * cosangle + S * OCd * sinangle + O
     return M
