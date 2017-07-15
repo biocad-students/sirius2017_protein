@@ -76,21 +76,34 @@ def smartsamp(structure):
     struct = smartimposer(structure,struct,splice)
     return struct
 
-
-def cleversamp(structure):
-    """
-        3 вариант сэмплирования
-        Параметры:
-            structure - список списков 3-меров
-    """
-    for alpha in structure[0]:
-        for beta in structure[1]:
-            for gamma in structure[2]:
-                fixed = [alpha['N'],alpha['CA'],alpha['C']]
-                moving = [beta['N'],beta['CA'],beta['C']]
-                sp = Superimposer()
-                sp.set_atoms(fixed,moving)
-                
-                        v = r.get_vector()
-                        cord = numpy.dot(v._ar,sp.rotran[0])+sp.rotran[1]
-                        structure[y][r.get_name()].set_coord(cord)
+#
+# def cleversamp(structure):
+#     """
+#         3 вариант сэмплирования
+#         Параметры:
+#             structure - список списков 3-меров
+#     """
+#     first = 1
+#     for alpha in structure[0]:
+#         for beta in structure[1]:
+#             for gamma in structure[2]:
+#                 if(first):
+#                 fixed = [alpha[2]['N'],alpha[2]['CA'],alpha[2]['C']]
+#                 moving = [beta[0]['N'],beta[0]['CA'],beta[0]['C']]
+#                 sp = Superimposer()
+#                 sp.set_atoms(fixed,moving)
+#                 for residue in beta:
+#                     for atom in residue:
+#                         v = r.get_vector()
+#                         cord = numpy.dot(v._ar,sp.rotran[0])+sp.rotran[1]
+#                         structure[y][r.get_name()].set_coord(cord)
+#
+#                 fixed = [beta[2]['N'],beta[2]['CA'],beta[2]['C']]
+#                 moving = [gamma[0]['N'],gamma[0]['CA'],gamma[0]['C']]
+#                 sp = Superimposer()
+#                 sp.set_atoms(fixed,moving)
+#                 for residue in beta:
+#                     for atom in residue:
+#                         v = r.get_vector()
+#                         cord = numpy.dot(v._ar,sp.rotran[0])+sp.rotran[1]
+#                         structure[y][r.get_name()].set_coord(cord)
