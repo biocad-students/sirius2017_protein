@@ -25,11 +25,12 @@ from sampling.smartsampling import *
 
 # FINAL TEST
 #final_check("../../../Desktop/test_rmsd/regions.txt","../../../Desktop/test_rmsd/source/","../../../Desktop/test_rmsd/result/","../../../Desktop/result.txt")
+#final_check("../../../Desktop/regions.txt","../sirius_out/","../../../Desktop/out/","../../../Desktop/result.txt")
 
 # SMART SAMPLING
 #print("ssadads")
-# a = read("../pdb/1.pdb")
-# b = read("../pdb/2.pdb")
-# c = read("../pdb/3.pdb")
-# struct = smartsamp([c.child_list,b.child_list,a.child_list])
-# writeres("out.pdb",struct)
+a = read("../pdb/1.pdb")
+b = read("../pdb/2.pdb")
+c = read("../pdb/3.pdb")
+struct = smartsamp([c.child_list,b.child_list,a.child_list])
+writeres("out.pdb",struct)

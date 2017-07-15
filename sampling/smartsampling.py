@@ -2,8 +2,11 @@ from Bio.PDB import *
 from Bio.PDB.Structure import Structure
 from utils.utilits import *
 from geometry.transform import *
-from sampling.sampl1 import 
+from sampling.sampl_1 import rot1
 import numpy,math
+
+
+from utils.io import *
 
 def smartimposer(ta,structure,splice):
     for x in splice:
@@ -33,13 +36,23 @@ def smartimposer(ta,structure,splice):
     structure = _structure
     for x in range(1,len(structure)):
         if(letter(structure[x]) != 'P'):
+            writeres("before"+str(x)+".pdb",structure)
             O = structure[x-1]['O'].get_vector()
             C = structure[x-1]['C'].get_vector()
             N = structure[x]['N'].get_vector()
             H = structure[x]['H'].get_vector()
             angle = calc_dihedral(O,C,N,H)
             if(abs(angle)<math.radians(160)):
-                structure = rot(structure,math.pi-angle,x,0)
+                N = structure[x]['N'].get_vector()
+                H = structure[x]['H'].get_vector()
+                Vnc = O-N
+                Vnh = C-N
+                Dnh = distance(N,H)
+                vertical = numpy.cross(Vnc.get_array(),Vnh.get_array())
+                Ci = calcnewcord(N,N+vertical,C,math.radians(120))
+                Hnew = normalize(Ci-N.get_array())*Dnh + N.get_array()
+                structure[x]['H'].set_coord(Hnew)
+                writeres("afterH"+str(x)+"_"+structure[x].get_resname()+".pdb",structure)
 
     return structure
 

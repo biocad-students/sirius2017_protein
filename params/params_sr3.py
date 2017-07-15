@@ -9,7 +9,7 @@ kolvo = []
 def varrand(mas, b):
     def rand(am1, am2, j):
         Pam = (am1 + ' ' + am2)
-        f = open('text.txt')
+        f = open('../sirius_out/text.txt')
         q = 0
         arr = []
         for line in f:

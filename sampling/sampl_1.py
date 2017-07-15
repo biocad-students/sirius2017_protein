@@ -9,7 +9,7 @@ def dist(coordA, coordB):
     return sqrt(pow(coordA[0] - coordB[0], 2) + pow(coordA[1] - coordB[1], 2) + pow(coordA[2] - coordB[2], 2))
 
 def generate(s):
-    structure = read('/home/ludmila/git/sirius2017_protein/sampling/aminos_out.pdb', "test")
+    structure = read('../sirius_out/aminos_out.pdb', "test")
     arr = {}
     for residue in structure:
         arr[seq1(residue.get_resname())] = residue
@@ -156,4 +156,3 @@ def samples(amino_seq, cnt):
 
 """if __name__ == "__main__":
     main()"""
-
