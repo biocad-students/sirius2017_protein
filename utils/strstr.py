@@ -2,7 +2,7 @@ import numpy as np
 
 
 def get_residue_number(char_number, loops):	#Номер  pdb файла по его индексу в regions.txt
-	splt = loops[:char_number+1].split('\n')
+	splt = loops[:char_number+1].split()
 	return len(splt)-1, len(splt[-1])-1
 
 def dict_ziper(dictionary):
@@ -39,10 +39,10 @@ def loopSubstring(to_parse, var_number, hidden_num=None, prefix='../sirius_out/'
 	f.close()
 	if hidden_num:		#Прячем "скрытый номер"
 		index = ids.index(hidden_num)
-		loops = loops.split('\n')
+		loops = loops.split()
 		del(loops[index])
 		del(ids[index])
-		loops = '\n'.join(loops)
+		loops = ' '.join(loops)
 	results=[]
 	for i in range(var_number):
 		parsing = to_parse
@@ -51,8 +51,6 @@ def loopSubstring(to_parse, var_number, hidden_num=None, prefix='../sirius_out/'
 		while not all([s == '' for s in parsing.split('%')]):	#Жадно разбиваем на подстроки
 			out = maxSubstring(loops,parsing, min(max(i-i2,0), max(max([len(s) for s in parsing.split('%')]) - 2, 0)))
 			nums = get_residue_number(out[0], loops)
-			print(i,out,nums)
-			#sprint(loops)
 			results[i][out[1]] = (ids[nums[0]], nums[1], out[2])
 			parsing = parsing[:out[1]] + '%' * out[2] + parsing[out[1]+out[2]:]
 			i2+=1
