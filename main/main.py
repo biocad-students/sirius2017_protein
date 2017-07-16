@@ -13,12 +13,19 @@ from Bio.PDB.Chain import Chain
 from algo.CCD import *
 from sampling.sampl_1 import samples
 
+
+
 IssmartWork = True
 IsDebugReq = False
 THREADNUM = 1
 COUNT = 10
-regionPath = "../../../Desktop/sirius_out/regions.txt"
-structsPath = "../../../Desktop/sirius_out/"
+if len(sys.argv) > 1:
+	regionPath = sys.argv[1] + "regions.txt"
+	structsPath = sys.argv[1]
+else:
+	regionPath = "../../../Desktop/sirius_out/regions.txt"
+	structsPath = "../../../Desktop/sirius_out/"
+	
 folderwithresult = "result/"
 
 
