@@ -106,7 +106,7 @@ def Work(cdr3,calcstart,calcstop):
                 debugI("merged",merged)
                 print("writing")
                 combined = imposer(merged,firstRes,lastRes)
-                writeres(combined)
+                writeres("forP/combined"+str(fileenum)+".pdb",combined)
                 debugI("combined",combined)
                 #5 CCD
                 #writeres("")
