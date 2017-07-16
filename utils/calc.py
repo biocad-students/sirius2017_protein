@@ -9,7 +9,7 @@ def distance(cordA,cordB):
             cordA, cordB - координаты точек
     """
     return sqrt((cordA[0]-cordB[0])**2+(cordA[1]-cordB[1])**2+(cordA[2]-cordB[2])**2)
-    
+
 nm = linalg.norm
 def normalize(v):
     """

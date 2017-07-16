@@ -60,7 +60,7 @@ def preparing():
             cdr3.append([string[0],cordstart,cordstop])
             string = f.readline().split()
     threads = []
-    lengthP = (len(cdr3)+1)/THREADNUM
+    lengthP = (len(cdr3))/THREADNUM
     calcpos = 0
 
     for n in range(THREADNUM):
@@ -102,6 +102,7 @@ def Work(cdr3,calcstart,calcstop):
                 combined = imposer(merged,firstRes,lastRes)
                 debugI("combined",combined)
                 #5 CCD
+                #writeres("")
                 afterCCD = CCD(combined,lastRes,feedback = False)
                 # 6 скл
                 firstPart = ourres[0:cdr3[counter][1]]
@@ -113,7 +114,11 @@ def Work(cdr3,calcstart,calcstop):
             directory = str(cdr3[counter][0])+"/"
             for instance in range(len(sa)):
                 index = 0
+                writeres("beforeImpose"+str(instance)+".pdb",sa[instance])
                 combined = imposer(sa[instance],firstRes,lastRes)
+                ###print("writing")
+                ###writeres("list/combinedPeteylka"+str(instance)+".pdb",combined)
+                ###writeres("list/target"+str(instance)+".pdb",[lastRes,lastRes])
                 debugI("combined",combined)
                 #5 CCD
                 afterCCD = CCD(combined,lastRes,feedback = False)

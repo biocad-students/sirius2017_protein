@@ -18,7 +18,8 @@ def smartimposer(ta,structure,splice):
                 v = r.get_vector()
                 cord = numpy.dot(v._ar,sp.rotran[0])+sp.rotran[1]
                 structure[y][r.get_name()].set_coord(cord)
-            writeres("RRR"+str(splice)+".pdb",structure)
+    ### print("peteylka")
+    ### writeres("peteylka "+str(splice)+".pdb",structure)
     for x in splice:
         structure[x-1] = 0
     for x in splice:
@@ -79,40 +80,40 @@ path = "../pdb/3-stor/"
 def getresidue(name):
     return read(path+name+".pdb")
 
-def cleversamp(var):
-    """
-        3 вариант сэмплирования
-        Параметры:
-            structure - список списков 3-меров
-    """
-    finalresidue = getresidue(var[0:3])
-    resindex = 0
-    for x in finalresidue:
-        x.id = (' ',resindex,' ')
-        resindex+=1
-    finalstr = var[0:3]
-    varlen = len(var)
-    index = 1
-    while(varlen>index):
-        for x in finalresidue:
-            print(x)
-        print("\n\n")
-        req = finalstr[index]+finalstr[index+1]+var[index+2]
-        index+=1
-        print("looking for:",req)
-        res = getresidue(req)
-        for residue in res:
-            residue.id = (' ',resindex,' ')
-            resindex+=1
-            finalresidue.add(residue)
-        # fixed = [finalresidue[index-1]['N'],finalresidue[index-1]['CA'],finalresidue[index-1]['C']]
-        # moving = [res[index-2]['N'],res[index-2]['CA'],res[index-2]['C']]
-        # sp = Superimposer()
-        # sp.set_atoms(fixed,moving)
-        # for residue in res:
-        #     for atom in residue:
-        #         v = atom.get_vector()
-        #         cord = numpy.dot(v._ar,sp.rotran[0])+sp.rotran[1]
-        #         atom.set_coord(cord)
-
-    return finalresidue
+# def cleversamp(var):
+#     """
+#         3 вариант сэмплирования
+#         Параметры:
+#             structure - список списков 3-меров
+#     """
+#     finalresidue = getresidue(var[0:3])
+#     resindex = 0
+#     for x in finalresidue:
+#         x.id = (' ',resindex,' ')
+#         resindex+=1
+#     finalstr = var[0:3]
+#     varlen = len(var)
+#     index = 1
+#     while(varlen>index):
+#         for x in finalresidue:
+#             print(x)
+#         print("\n\n")
+#         req = finalstr[index]+finalstr[index+1]+var[index+2]
+#         index+=1
+#         print("looking for:",req)
+#         res = getresidue(req)
+#         for residue in res:
+#             residue.id = (' ',resindex,' ')
+#             resindex+=1
+#             finalresidue.add(residue)
+#         # fixed = [finalresidue[index-1]['N'],finalresidue[index-1]['CA'],finalresidue[index-1]['C']]
+#         # moving = [res[index-2]['N'],res[index-2]['CA'],res[index-2]['C']]
+#         # sp = Superimposer()
+#         # sp.set_atoms(fixed,moving)
+#         # for residue in res:
+#         #     for atom in residue:
+#         #         v = atom.get_vector()
+#         #         cord = numpy.dot(v._ar,sp.rotran[0])+sp.rotran[1]
+#         #         atom.set_coord(cord)
+#
+#     return finalresidue

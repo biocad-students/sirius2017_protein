@@ -7,7 +7,7 @@ def regions_to_dict(regions): #Превращает строку файла regi
 			result[string.split()[0]] = string.split()[1:]
 	return result
 
-def get_residues_by_pos(resList, prefix='../files/'):
+def get_residues_by_pos(resList, prefix):
 	'''
 		Принимает список кортежей в формате вывода strstr.loopSubstring, возвращает список списков соответствующих residue
 	'''
