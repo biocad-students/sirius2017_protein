@@ -15,9 +15,9 @@ from sampling.sampl_1 import samples
 
 
 
-IssmartWork = False
+IssmartWork = True
 IsDebugReq = False
-THREADNUM = 3
+THREADNUM = 1
 COUNT = 10
 if len(sys.argv) > 1:
 	regionPath = sys.argv[1] + "regions.txt"
@@ -74,8 +74,8 @@ def preparing():
         thrd.join()
 
 def Work(cdr3,calcstart,calcstop,files):
-    #calcstart = 320
-    #calcstop = 322
+    calcstart = 321
+    calcstop = 323
     print("Booting thread #",os.getpid())
 ## MAIN PROGRAM ##
     for counter in range(calcstart,calcstop):

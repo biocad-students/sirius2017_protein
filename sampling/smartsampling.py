@@ -13,7 +13,7 @@ def smartimposer(ta,structure,splice):
         sp = Superimposer()
         sp.set_atoms(fixed,moving)
 
-        for y in range(x,len(structure)):
+        for y in range(x+1,len(structure)):
             for r in structure[y]:
                 v = r.get_vector()
                 cord = numpy.dot(v._ar,sp.rotran[0])+sp.rotran[1]
@@ -48,7 +48,6 @@ def smartimposer(ta,structure,splice):
                 Ci = calcnewcord(N,N+vertical,C,math.radians(120))
                 Hnew = normalize(Ci-N.get_array())*Dnh + N.get_array()
                 structure[x]['H'].set_coord(Hnew)
-
     return structure
 
 
