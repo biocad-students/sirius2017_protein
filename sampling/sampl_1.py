@@ -2,11 +2,8 @@ from Bio.SeqUtils import *
 from geometry.rotation import *
 from geometry.transform import *
 from utils.io import *
+from utils.calc import distance
 from params.params_sr3 import *
-
-def dist(coordA, coordB):
-    # длина вектора
-    return sqrt(pow(coordA[0] - coordB[0], 2) + pow(coordA[1] - coordB[1], 2) + pow(coordA[2] - coordB[2], 2))
 
 def generate(s):
     structure = read('../files/aminos_out.pdb', "test")
@@ -107,15 +104,15 @@ def moveTo(last, amino1):
     N = amino['N'].get_vector()
     H = get_H(amino)
     CA2 = amino['CA'].get_vector()
-    if(dist(C, CA2)<limit):
+    if(distance(C, CA2)<limit):
         for atom in amino:
             atom.set_coord(rotate_vector(N.get_array(), H.get_array(), atom.get_vector().get_array(), pi))
     return amino
 
 def culc_angle(a, b, c):
-    x = dist(a, b)
-    y = dist(b, c)
-    z = dist(a, c)
+    x = distance(a, b)
+    y = distance(b, c)
+    z = distance(a, c)
     return arccos((x * x + y * y - z * z) / (2 * x * y))
 
 def rotate_by_dih(residues, angles):
