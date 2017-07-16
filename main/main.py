@@ -25,7 +25,7 @@ if len(sys.argv) > 1:
 else:
 	regionPath = "../../../Desktop/sirius_out/regions.txt"
 	structsPath = "../../../Desktop/sirius_out/"
-	
+
 folderwithresult = "result/"
 
 
@@ -74,6 +74,8 @@ def preparing():
         thrd.join()
 
 def Work(cdr3,calcstart,calcstop):
+    calcstart = 862
+    calcstop = 863
     print("Booting thread #",os.getpid())
 ## MAIN PROGRAM ##
     for counter in range(calcstart,calcstop):
