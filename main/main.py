@@ -17,7 +17,7 @@ from sampling.sampl_1 import samples
 
 IssmartWork = False
 IsDebugReq = False
-THREADNUM = 1
+THREADNUM = 3
 COUNT = 10
 if len(sys.argv) > 1:
 	regionPath = sys.argv[1] + "regions.txt"
@@ -74,8 +74,8 @@ def preparing():
         thrd.join()
 
 def Work(cdr3,calcstart,calcstop,files):
-    calcstart = 320
-    calcstop = 322
+    #calcstart = 320
+    #calcstop = 322
     print("Booting thread #",os.getpid())
 ## MAIN PROGRAM ##
     for counter in range(calcstart,calcstop):
@@ -96,7 +96,7 @@ def Work(cdr3,calcstart,calcstop,files):
         print("Working with ",cdr3[counter])
         # 1 STEP
         letterList = [letter(x) for x in ourchain.child_list]
-        os.mkdir(folderwithresult+str(cdr3[counter][0]))
+        os.system("mkdir -p "+folderwithresult+str(cdr3[counter][0]))
         if(IssmartWork):
             _preSub = loopSubstring(''.join(letterList),COUNT,None,structsPath)
             for fileenum in range(len(_preSub)):
