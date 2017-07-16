@@ -15,7 +15,7 @@ from sampling.sampl_1 import samples
 
 
 
-IssmartWork = True
+IssmartWork = False
 IsDebugReq = False
 THREADNUM = 1
 COUNT = 10
@@ -62,10 +62,10 @@ def preparing():
     threads = []
     lengthP = (len(cdr3))/THREADNUM
     calcpos = 0
-
+    files = os.listdir(folderwithresult)
     for n in range(THREADNUM):
         print("new thread: #",n," with range [",round(calcpos),",",round(calcpos+lengthP),"]\n")
-        threads.append(multiprocessing.Process(target=Work,args = (cdr3,round(calcpos),round(calcpos+lengthP))))
+        threads.append(multiprocessing.Process(target=Work,args = (cdr3,round(calcpos),round(calcpos+lengthP),files)))
         calcpos+=lengthP
 
     for thrd in threads:
@@ -73,12 +73,19 @@ def preparing():
     for thrd in threads:
         thrd.join()
 
-def Work(cdr3,calcstart,calcstop):
+def Work(cdr3,calcstart,calcstop,files):
     calcstart = 320
     calcstop = 322
     print("Booting thread #",os.getpid())
 ## MAIN PROGRAM ##
     for counter in range(calcstart,calcstop):
+        iscontinue = False
+        for x in files:
+            if(x == cdr3[counter][0]):
+                print("Skipped: ",cdr3[counter])
+                iscontinue = True
+        if(iscontinue):
+            continue
         ourpdb = read(structsPath+str(cdr3[counter][0])+".pdb")
         ourres = ourpdb.child_list
         ourchain = Chain(0)
@@ -107,10 +114,13 @@ def Work(cdr3,calcstart,calcstop):
                 #writeres("")
                 afterCCD = CCD(combined,lastRes,feedback = False)
                 # 6 скл
-                firstPart = ourres[0:cdr3[counter][1]]
-                secondPart = ourres[cdr3[counter][2]:]
-                chainArray = firstPart+afterCCD[1:-1]+secondPart
-                writeres(folderwithresult+directory+str(fileenum)+".pdb",chainArray)
+                if(afterCCD == None):
+                    print("there is no peteylka :(. ",counter,instance)
+                else:
+                    firstPart = ourres[0:cdr3[counter][1]]
+                    secondPart = ourres[cdr3[counter][2]:]
+                    chainArray = firstPart+afterCCD[1:-1]+secondPart
+                    writeres(folderwithresult+directory+str(fileenum)+".pdb",chainArray)
         else:
             sa = samples(letterList,COUNT)
             directory = str(cdr3[counter][0])+"/"
@@ -121,13 +131,11 @@ def Work(cdr3,calcstart,calcstop):
                 #5 CCD
                 afterCCD = CCD(combined,lastRes,feedback = False)
                 # 6 скл
-                try:
+                if(afterCCD == None):
+                    print("there is no peteylka :(. ",counter,instance)
+                else:
                     firstPart = ourres[0:cdr3[counter][1]]
                     secondPart = ourres[cdr3[counter][2]:]
                     chainArray = firstPart+afterCCD[1:-1]+secondPart
                     writeres(folderwithresult+directory+str(instance)+".pdb",chainArray)
-                except:
-                    file = open(folderwithresult+directory+str(instance)+".txt","w")
-                    file.write("there is no peteylka :(")
-                    file.close()
 preparing()
