@@ -8,6 +8,55 @@ def dist(coordA, coordB):
     # длина вектора
     return sqrt(pow(coordA[0] - coordB[0], 2) + pow(coordA[1] - coordB[1], 2) + pow(coordA[2] - coordB[2], 2))
 
+def rotate_vector(point1, point2, vec, angle):
+    '''
+    Вращение вектора на заданный угол вокруг оси, заданной двумя точками
+    point1, point2, vec, angle --> vec
+    V' = qvq^(–1)
+    '''
+    new_vec = np.resize(vec - point1,4)
+    new_vec[3] = 0
+    quat = make_quaternion(point1, point2, angle)
+    t = quat_mul_quat(quat, new_vec)
+    t = quat_mul_quat(t, quat_invert(quat))
+    return np.resize(t,3) + point1
+
+def make_quaternion(point1, point2, angle):
+    '''
+    Создание кватерниона, заданного осью вращения и углом
+    point1, point2, angle --> quat
+    q = [cos(a/2), [x sin(a/2), y sin(a/2), z sin(a/2)]]
+    '''
+    startpoint = point2 - point1
+    rotate_vector = startpoint / np.linalg.norm(startpoint)
+    quat = np.zeros(4)
+    quat[0] = rotate_vector[0] * sin(angle / 2 )
+    quat[1] = rotate_vector[1] * sin(angle / 2 )
+    quat[2] = rotate_vector[2] * sin(angle / 2 )
+    quat[3] = cos(angle / 2 )
+    return quat
+
+def quat_mul_quat(quat1, quat2):
+    '''
+    Произведение кватернионов
+    quat, quat --> quat
+    qq' = [ vv' + wv' + w'v, ww' – v•v' ]
+    '''
+    res = cross(np.resize(quat1,3), np.resize(quat2,3)) + np.resize(quat1,3) * quat2[3] + np.resize(quat2,3) * quat1[3]
+    res = np.resize(res,4)
+    res[3] = quat1[3] * quat2[3] - np.dot(quat1, quat2)
+    return res
+
+def quat_invert(quat):
+    '''
+    Инверсия кватерниона
+    quat --> quat
+    q^(-1) = [-v, w] / [xx + yy + zz + ww]
+    '''
+    res = quat * -1
+    res[3] = quat[3]
+    return res / np.linalg.norm(res)
+
 def generate(s, angles):
     structure = read('../files/aminos_out.pdb', "test")
     arr = {}
@@ -59,15 +108,19 @@ def move_dist(amino, dis, vec, A, B):
         atom.set_coord(atom.get_vector() + coord)
     return amino
 
-def rotate_amino(amino, A, B, C, D, angle):
+def rotate_amino(amino, A1, B1, C1, D1, angle):
     """выставляет angle между A,B,D; C лежит в этой же плоскости"""
+    A = A1.get_array()
+    B = B1.get_array()
+    C = C1.get_array()
+    D = D1.get_array()
     perp = cross(A - B, C - B)
-    angle -= calc_angle(A, B, D)
+    angle -= calc_angle(A1, B1, D1)
     perp[0] += B[0]
     perp[1] += B[1]
     perp[2] += B[2]
     for atom in amino:
-        atom.set_coord(rotate_vector(B.get_array(), perp, atom.get_vector().get_array(), -angle))
+        atom.set_coord(rotate_vector(B1.get_array(), perp, atom.get_vector().get_array(), -angle))
     return amino
 
 def get_H(amino):
@@ -141,7 +194,6 @@ def culc_angle(a, b, c):
 
 def samples(amino_seq, cnt):
     angles=varrand(amino_seq, cnt)
-    print(angles)
     result=[]
     for angle in angles:
         s=generate(amino_seq, angle)
