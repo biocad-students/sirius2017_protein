@@ -8,7 +8,6 @@ from utils.io import *
 
 def smartimposer(ta,structure,splice):
     for x in splice:
-        print(x,len(structure))
         fixed = [structure[x-1]['N'],structure[x-1]['CA'],structure[x-1]['C']]
         moving = [structure[x]['N'],structure[x]['CA'],structure[x]['C']]
         sp = Superimposer()
@@ -19,8 +18,6 @@ def smartimposer(ta,structure,splice):
                 v = r.get_vector()
                 cord = numpy.dot(v._ar,sp.rotran[0])+sp.rotran[1]
                 structure[y][r.get_name()].set_coord(cord)
-    ### print("peteylka")
-    ### writeres("peteylka "+str(splice)+".pdb",structure)
     for x in splice:
         structure[x-1] = 0
     for x in splice:
@@ -34,7 +31,7 @@ def smartimposer(ta,structure,splice):
         index+=1
         _structure.append(tmp)
     structure = _structure
-    for x in range(1,len(structure)):
+    for x in range(0,len(structure)):
         if(letter(structure[x]) != 'P'):
             O = structure[x-1]['O'].get_vector()
             C = structure[x-1]['C'].get_vector()
