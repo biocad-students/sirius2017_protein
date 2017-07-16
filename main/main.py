@@ -18,7 +18,7 @@ from sampling.sampl_1 import samples
 IssmartWork = True
 IsDebugReq = False
 THREADNUM = 1
-COUNT = 10
+COUNT = 1
 if len(sys.argv) > 1:
 	regionPath = sys.argv[1] + "regions.txt"
 	structsPath = sys.argv[1]
@@ -75,7 +75,7 @@ def preparing():
 
 def Work(cdr3,calcstart,calcstop):
     calcstart = 862
-    calcstop = 863
+    calcstop = 864
     print("Booting thread #",os.getpid())
 ## MAIN PROGRAM ##
     for counter in range(calcstart,calcstop):
@@ -91,17 +91,22 @@ def Work(cdr3,calcstart,calcstop):
         letterList = [letter(x) for x in ourchain.child_list]
         os.mkdir(folderwithresult+str(cdr3[counter][0]))
         if(IssmartWork):
-            _preSub = loopSubstring(''.join(letterList),COUNT,cdr3[counter][0],structsPath)
+            print("smartWo")
+            _preSub = loopSubstring(''.join(letterList),COUNT,None,structsPath)
+            print("after loop",_preSub)
             for fileenum in range(len(_preSub)):
                 directory = str(cdr3[counter][0])+"/"
                 # Собирает цепочки по буквам
-                sub = get_residues_by_pos(_preSub[fileenum],prefix = structsPath)
+                sub = get_residues_by_pos(_preSub[fileenum],"../files/",structsPath)
                 for i in range(len(sub)):
                     debugI(str(i), sub[i])
                 # Соединяет цепокич в одну
+                print("sub ",sub)
                 merged = smartsamp(sub)
                 debugI("merged",merged)
+                print("writing")
                 combined = imposer(merged,firstRes,lastRes)
+                writeres(combined)
                 debugI("combined",combined)
                 #5 CCD
                 #writeres("")
@@ -116,11 +121,7 @@ def Work(cdr3,calcstart,calcstop):
             directory = str(cdr3[counter][0])+"/"
             for instance in range(len(sa)):
                 index = 0
-                writeres("beforeImpose"+str(instance)+".pdb",sa[instance])
                 combined = imposer(sa[instance],firstRes,lastRes)
-                ###print("writing")
-                ###writeres("list/combinedPeteylka"+str(instance)+".pdb",combined)
-                ###writeres("list/target"+str(instance)+".pdb",[lastRes,lastRes])
                 debugI("combined",combined)
                 #5 CCD
                 afterCCD = CCD(combined,lastRes,feedback = False)

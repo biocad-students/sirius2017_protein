@@ -8,6 +8,7 @@ from utils.io import *
 
 def smartimposer(ta,structure,splice):
     for x in splice:
+        print(x,len(structure))
         fixed = [structure[x-1]['N'],structure[x-1]['CA'],structure[x-1]['C']]
         moving = [structure[x]['N'],structure[x]['CA'],structure[x]['C']]
         sp = Superimposer()
@@ -71,7 +72,6 @@ def smartsamp(structure):
             struct.append(x)
         splice.append(indexcount)
     splice.pop()
-
     struct = smartimposer(structure,struct,splice)
     return struct
 
