@@ -1,5 +1,5 @@
-def histo(param):
-    f = open('results.txt')
+def histo(way, param):
+    f = open(way)
     a = open('results_hist.txt', 'w')
     fl = []
     maxy = 0
@@ -15,7 +15,7 @@ def histo(param):
         k = 0
         ch = 0
         while k < len(fl):
-            if float(fl[k]) >= n/10 and float(fl[k]) < n/10 + 0.1:
+            if float(fl[k]) >= n/10 and float(fl[k]) < n/10 + param:
                 ch += 1
             k += 1
         n += param * 10
