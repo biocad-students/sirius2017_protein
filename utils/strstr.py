@@ -31,7 +31,7 @@ def loopSubstring(to_parse, var_number, hidden_num=None, prefix='../sirius_out/'
 		loopSubstring() = [[(protId, start, len), (protId, start,len)...],[(protId, start, len), (protId, start,len)...],...]
 		Где protId -- id белка, start -- первый residue в последовательности, len -- длина последовательности
 	'''
-	f = open(prefix + 'regions.txt', 'r')
+	f = open(prefixLoc + 'loops.txt', 'r')
 	loops = f.read()
 	f.close()
 	f = open(prefixLoc + 'ids.txt', 'r')
