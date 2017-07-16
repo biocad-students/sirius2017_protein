@@ -1,16 +1,7 @@
 from Bio.PDB import *
-import sys
-import os
+import os,sys,platform
+import multiprocessing
 sys.path.append("../")
-# from utils.io import read,writeres
-# from utils.calc import imposer
-# from utils.strstr import loopSubstring
-# from utils.utilits import letter
-# from utils.withdraw import get_residues_by_pos
-# from sampling.smartsampling import smartsamp
-# from Bio.PDB.Chain import Chain
-# from algo.CCD import CCD
-# import timeit
 
 from utils.io import *
 from utils.calc import *
@@ -20,86 +11,120 @@ from utils.withdraw import *
 from sampling.smartsampling import *
 from Bio.PDB.Chain import Chain
 from algo.CCD import *
-import timeit
+from sampling.sampl_1 import samples
+
+
+
+IssmartWork = True
+IsDebugReq = False
+THREADNUM = 1
+COUNT = 1
+if len(sys.argv) > 1:
+	regionPath = sys.argv[1] + "regions.txt"
+	structsPath = sys.argv[1]
+else:
+	regionPath = "../../../Desktop/sirius_out/regions.txt"
+	structsPath = "../../../Desktop/sirius_out/"
+
+folderwithresult = "result/"
 
 
 def debugI(name,structure):
-    print(name)
-    for x in structure:
-        print(x)
-    print("\n\n")
+	if(IsDebugReq):
+		print(name)
+		try:
+			for x in structure:
+				print(x)
+		except:
+				print(str(structure))
 
-def smartWork():
-    regionPath = "../sirius_out/regions.txt"
-    structsPath = "../sirius_out/"
-
+def preparing():
+    print("Booting settings:\nIssmartWork {}\n IsDebugReq {}\n count {}".format(IssmartWork,IsDebugReq,COUNT))
+    os.system("mkdir -p "+folderwithresult)
+    try:
+        file = open((folderwithresult+"info.log"),"w")
+        file.write("Sys info:")
+        file.write(str(platform.processor())+"\n")
+        file.write(str(platform.machine())+"#"+"\n")
+        file.write(str(platform.uname()))
+        file.write("\nWe running:"+str(THREADNUM)+"\nNumber of files:"+str(COUNT))
+        file.close()
+    except:
+        pass
     cdr3 = []
-    file1 = open(regionPath, "r")
-    _tmp = file1.read()
-    file1.close()
-    lines = _tmp.split('\n')
-    tmp = []
-    for x in lines:
-        tmp.append(x.split(' '))
-    for x in range(0,10):
-        cordstart = len(tmp[x][1]+tmp[x][2]+tmp[x][3]+tmp[x][4]+tmp[x][5])
-        cordstop = cordstart+len(tmp[x][6])
-        cdr3.append([tmp[x][0],cordstart,cordstop])
-    #for counter in range(0,len(cdr3)):
-    for counter in range(1):
+    with open(regionPath, "r") as f:
+        string = f.readline().split()
+        while string:
+            cordstart = len(string[1]+string[2]+string[3]+string[4]+string[5])
+            cordstop = cordstart+len(string[6])
+            cdr3.append([string[0],cordstart,cordstop])
+            string = f.readline().split()
+    threads = []
+    lengthP = (len(cdr3))/THREADNUM
+    calcpos = 0
+
+    for n in range(THREADNUM):
+        print("new thread: #",n," with range [",round(calcpos),",",round(calcpos+lengthP),"]\n")
+        threads.append(multiprocessing.Process(target=Work,args = (cdr3,round(calcpos),round(calcpos+lengthP))))
+        calcpos+=lengthP
+
+    for thrd in threads:
+        thrd.start()
+    for thrd in threads:
+        thrd.join()
+
+def Work(cdr3,calcstart,calcstop):
+    calcstart = 860
+    calcstop = 864
+    print("Booting thread #",os.getpid())
+## MAIN PROGRAM ##
+    for counter in range(calcstart,calcstop):
         ourpdb = read(structsPath+str(cdr3[counter][0])+".pdb")
         ourres = ourpdb.child_list
         ourchain = Chain(0)
         firstRes = ourres[cdr3[counter][1]-1]
         lastRes =  ourres[cdr3[counter][2]]
         for x in range(cdr3[counter][1]-1,cdr3[counter][2]+1):
-                ourchain.add(ourres[x])
-        print("chain",ourchain.child_list)
+            ourchain.add(ourres[x])
+        print("Working with ",cdr3[counter])
         # 1 STEP
         letterList = [letter(x) for x in ourchain.child_list]
-        preSub = loopSubstring(''.join(letterList),2,cdr3[counter][0])
-        os.mkdir(str(cdr3[counter][0]))
-        directory = str(cdr3[counter][0])+"/"
-        # Собирает цепочки по буквам
-        sub = get_residues_by_pos(preSub[0])
-        debugI("sub",sub)
-        # Соединяет цепокич в одну
-        merged = smartsamp(sub)
-        debugI("merged",merged)
-        combined = imposer(merged,firstRes,lastRes)
-        debugI("combined",combined)
-        #5 CCD
-        afterCCD = CCD(combined,lastRes)
-        # 6 скл
-        firstPart = ourres[0:cdr3[counter][1]]
-        secondPart = ourres[cdr3[counter][2]:]
-        chainArray = firstPart+afterCCD[1:-1]+secondPart
-        writeres(directory+str(counter)+".pdb",chainArray)
-
-
-
-def defaultWork():
-    # Данные
-
-
-    # Паша
-
-
-    #Люда
-
-    pass
-# def timetest():
-#     time = timeit.Timer(setup=smartWork).repeat(10)
-#     summ = 0
-#     for x in time:
-#         summ+=x
-#     print(summ/len(time))
-# timetest()
-smartWork()
-
-# ОПТИМИЗАЦИИ
-# 0.015892415899725166 - 1 результат
-# 0.015419271100472542 - убрал pow
-# 0.016497708200040505 - убрали библиотеки
-# 0.01711203030008619 - красиво сделал
-# 0.015177678400141304 - изменил все функции на * в модулях
+        os.mkdir(folderwithresult+str(cdr3[counter][0]))
+        if(IssmartWork):
+            _preSub = loopSubstring(''.join(letterList),COUNT,None,structsPath)
+            for fileenum in range(len(_preSub)):
+                directory = str(cdr3[counter][0])+"/"
+                # Собирает цепочки по буквам
+                sub = get_residues_by_pos(_preSub[fileenum],"../files/",structsPath)
+                for i in range(len(sub)):
+                    debugI(str(i), sub[i])
+                # Соединяет цепокич в одну
+                merged = smartsamp(sub)
+                debugI("merged",merged)
+                combined = imposer(merged,firstRes,lastRes)
+                writeres("forP/combined"+str(fileenum)+".pdb",combined)
+                writeres("forP/target"+str(fileenum)+".pdb",[lastRes,lastRes])
+                debugI("combined",combined)
+                #5 CCD
+                #writeres("")
+                afterCCD = CCD(combined,lastRes,feedback = False)
+                # 6 скл
+                firstPart = ourres[0:cdr3[counter][1]]
+                secondPart = ourres[cdr3[counter][2]:]
+                chainArray = firstPart+afterCCD[1:-1]+secondPart
+                writeres(folderwithresult+directory+str(fileenum)+".pdb",chainArray)
+        else:
+            sa = samples(letterList,COUNT)
+            directory = str(cdr3[counter][0])+"/"
+            for instance in range(len(sa)):
+                index = 0
+                combined = imposer(sa[instance],firstRes,lastRes)
+                debugI("combined",combined)
+                #5 CCD
+                afterCCD = CCD(combined,lastRes,feedback = False)
+                # 6 скл
+                firstPart = ourres[0:cdr3[counter][1]]
+                secondPart = ourres[cdr3[counter][2]:]
+                chainArray = firstPart+afterCCD[1:-1]+secondPart
+                writeres(folderwithresult+directory+str(instance)+".pdb",chainArray)
+preparing()

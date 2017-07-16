@@ -1,10 +1,8 @@
-geometry/__pycache__/
-algo/__pycache__/
-utils/__pycache__/
+*/__pycache__/*
 debug/out.pdb
 debug/examples
 params/.ipynb_checkpoints
-sampling/__pycache__/
 .idea/
-/sirius_out/*.pdb
-/sirius_out/regions.txt
+sirius_out/*.pdb
+!*aminos_out.pdb
+main/result

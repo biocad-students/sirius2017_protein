@@ -9,7 +9,7 @@ kolvo = []
 def varrand(mas, b):
     def rand(am1, am2, j):
         Pam = (am1 + ' ' + am2)
-        f = open('text.txt')
+        f = open('../files/text.txt')
         q = 0
         arr = []
         for line in f:
@@ -39,4 +39,3 @@ def varrand(mas, b):
         z += 1
         x = 0
     return (itog)
-varrand ('QQQ', 7)

@@ -1,14 +1,11 @@
 from Bio.SeqUtils import *
-from geometry.rotation import *
 from geometry.transform import *
 from utils.io import *
-
-def dist(coordA, coordB):
-    # длина вектора
-    return sqrt(pow(coordA[0] - coordB[0], 2) + pow(coordA[1] - coordB[1], 2) + pow(coordA[2] - coordB[2], 2))
+from utils.calc import distance
+from params.params_sr3 import *
 
 def generate(s):
-    structure = read('/home/ludmila/git/sirius2017_protein/sampling/aminos_out.pdb', "test")
+    structure = read('../files/aminos_out.pdb', "test")
     arr = {}
     for residue in structure:
         arr[seq1(residue.get_resname())] = residue
@@ -20,18 +17,19 @@ def generate(s):
             result.append(res)
         else:
             result.append(arr[c])
-    return [result]
+    return result
 
 def grad(angle):
     return angle*180/pi
 
-def rot1(amino,angle, O, C, N, H):
+def rot1(amino1,angle, O, C, N, H):
     """
         Поворот структуры вогрук оси С-N
         Параметры:
             amino - структура
             angle - угол поворота [pi,pi]
     """ # -2 из за заглушки
+    amino=amino1.copy()
     DIangle = angle-calc_dihedral(O,C,N,H)
     extra =  DIangle
     for atom in amino:
@@ -58,7 +56,7 @@ def move_dist(amino, dis, vec, A, B):
 
 def rotate_amino(amino, A, B, C, D, angle):
     """выставляет angle между A,B,D; C лежит в этой же плоскости"""
-    perp = vec_mult_vec(A - B, C - B)
+    perp = cross(A - B, C - B)
     angle -= calc_angle(A, B, D)
     perp[0] += B[0]
     perp[1] += B[1]
@@ -105,15 +103,15 @@ def moveTo(last, amino1):
     N = amino['N'].get_vector()
     H = get_H(amino)
     CA2 = amino['CA'].get_vector()
-    if(dist(C, CA2)<limit):
+    if(distance(C, CA2)<limit):
         for atom in amino:
             atom.set_coord(rotate_vector(N.get_array(), H.get_array(), atom.get_vector().get_array(), pi))
     return amino
 
 def culc_angle(a, b, c):
-    x = dist(a, b)
-    y = dist(b, c)
-    z = dist(a, c)
+    x = distance(a, b)
+    y = distance(b, c)
+    z = distance(a, c)
     return arccos((x * x + y * y - z * z) / (2 * x * y))
 
 def rotate_by_dih(residues, angles):
@@ -145,14 +143,13 @@ def rotate_by_dih(residues, angles):
             residues[i+1]['H'].set_coord(H)
     return residues
 
-def main():
-    s=generate("AQGP")
-    angles=[(-53.005436, 166.00095, -107.3551), (137.84758, -172.47937, 90.52946),(-83.336555, -6.25399, -71.49093)]
-    for i in range(len(s)):
-        cur_s = s[i]
-        writeres('/tmp/t' + str(i) + '.pdb', cur_s)
-        result = rotate_by_dih(cur_s, angles)
-        writeres('/tmp/'+str(i)+'.pdb', result)
+def samples(amino_seq, cnt):
+    angles=varrand(amino_seq, cnt)
+    result=[]
+    for angle in angles:
+        s=generate(amino_seq)
+        result.append(rotate_by_dih(s, angle))
+    return result
 
-if __name__ == "__main__":
-    main()
+"""if __name__ == "__main__":
+    main()"""
