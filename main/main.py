@@ -74,7 +74,7 @@ def preparing():
         thrd.join()
 
 def Work(cdr3,calcstart,calcstop):
-    calcstart = 862
+    calcstart = 860
     calcstop = 864
     print("Booting thread #",os.getpid())
 ## MAIN PROGRAM ##
@@ -91,9 +91,7 @@ def Work(cdr3,calcstart,calcstop):
         letterList = [letter(x) for x in ourchain.child_list]
         os.mkdir(folderwithresult+str(cdr3[counter][0]))
         if(IssmartWork):
-            print("smartWo")
             _preSub = loopSubstring(''.join(letterList),COUNT,None,structsPath)
-            print("after loop",_preSub)
             for fileenum in range(len(_preSub)):
                 directory = str(cdr3[counter][0])+"/"
                 # Собирает цепочки по буквам
@@ -101,12 +99,11 @@ def Work(cdr3,calcstart,calcstop):
                 for i in range(len(sub)):
                     debugI(str(i), sub[i])
                 # Соединяет цепокич в одну
-                print("sub ",sub)
                 merged = smartsamp(sub)
                 debugI("merged",merged)
-                print("writing")
                 combined = imposer(merged,firstRes,lastRes)
                 writeres("forP/combined"+str(fileenum)+".pdb",combined)
+                writeres("forP/target"+str(fileenum)+".pdb",[lastRes,lastRes])
                 debugI("combined",combined)
                 #5 CCD
                 #writeres("")
