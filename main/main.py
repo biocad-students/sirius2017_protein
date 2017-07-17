@@ -12,10 +12,10 @@ from sampling.smartsampling import *
 from Bio.PDB.Chain import Chain
 from algo.CCD import *
 from sampling.sampl_1 import samples
-from params.Class import MyClass
+#from params.Class import MyClass
 
 
-TypeOfWork = 0
+TypeOfWork = 1
 # 1 - 1 ветка
 # 2 - 2 ветка
 # 3 - 3 ветка
