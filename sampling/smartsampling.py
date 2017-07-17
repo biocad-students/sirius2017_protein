@@ -65,7 +65,10 @@ def smartsamp(structure):
 path = "../pdb/3-stor/"
 
 def getresidue(name):
-    return read(path+name+".pdb").child_list
+    if(name == "ASG"):
+        return [read(path+name+"1.pdb").child_list,read(path+name+"2.pdb").child_list,read(path+name+".pdb").child_list]
+    return [read(path+name+".pdb").child_list]
+
 
 def cleversamp(var):
     """
@@ -73,24 +76,36 @@ def cleversamp(var):
         Параметры:
             structure - список списков 3-меров
     """
-    finalresidue = getresidue(var[0:3])
+    finalresidue = getresidue(var[0:3])[0]
     resindex = 0
     index = 1
     while(len(var)+1>index+3):
-        fixed = [finalresidue[-2]['N'],finalresidue[-2]['CA'],finalresidue[-2]['C'],finalresidue[-1]['N'],finalresidue[-1]['CA'],finalresidue[-1]['C']]
-        finalresidue.pop()
-        finalresidue.pop()
-        finalresidue.extend(getresidue(var[index:index+3]))
-        moving = [finalresidue[-3]['N'],finalresidue[-3]['CA'],finalresidue[-3]['C'],finalresidue[-2]['N'],finalresidue[-2]['CA'],finalresidue[-2]['C']]
-        sp = Superimposer()
-        sp.set_atoms(fixed,moving)
-        for residue in range(index,len(finalresidue)):
-            for atom in finalresidue[residue]:
-                v = atom.get_vector()
-                cord = numpy.dot(v._ar,sp.rotran[0])+sp.rotran[1]
-                atom.set_coord(cord)
-        index+=1
-    for x in finalresidue:
-        x.id = (' ',resindex,' ')
-        resindex+=1
-    return finalresidue
+        rms = 1000
+        isnew = True
+        tmpresidue = finalresidue
+        for residues in getresidue(var[index:index+3]):
+            finalresidue = tmpresidue
+            fixed = [finalresidue[-2]['N'],finalresidue[-2]['CA'],finalresidue[-2]['C'],finalresidue[-1]['N'],finalresidue[-1]['CA'],finalresidue[-1]['C']]
+            finalresidue.pop()
+            finalresidue.pop()
+            print(residues)
+            finalresidue.extend(residues)
+            moving = [finalresidue[-3]['N'],finalresidue[-3]['CA'],finalresidue[-3]['C'],finalresidue[-2]['N'],finalresidue[-2]['CA'],finalresidue[-2]['C']]
+            sp = Superimposer()
+            sp.set_atoms(fixed,moving)
+            for residue in range(index,len(finalresidue)):
+                for atom in finalresidue[residue]:
+                    v = atom.get_vector()
+                    cord = numpy.dot(v._ar,sp.rotran[0])+sp.rotran[1]
+                    atom.set_coord(cord)
+            index+=1
+            if(isnew):
+                best = finalresidue
+            else:
+                trms = rmsd(best,finalresidue)
+                if(trms<rms):
+                    best = finalresidue
+    for x in best:
+        x.id = (' ',best,' ')
+        best+=1
+    return best
