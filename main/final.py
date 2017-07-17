@@ -3,18 +3,17 @@ sys.path.append("../")
 from utils.final_check import final_check
 from params.Funk_hist import *
 
-if len(sys.argv) > 3:
-    pathWithRedions = sys.argv[1]
-    pathWithSource = sys.argv[2]
-    pathToResults = sys.argv[3]
-    pathToOut = sys.argv[4]
+if len(sys.argv) > 1:
+	pathToRegions = sys.argv[1] + "regions.txt"
+	pathToSource = sys.argv[1]
 else:
-    pathToRedions = "../../../Desktop/regions.txt"
-    pathToSource = "../sirius_out/"
-    pathToResults = "../../../Desktop/out/"
-    pathToOut = "../../../Desktop/result.txt"
+	pathToRegions = "../../../Desktop/sirius_out/regions.txt"
+	pathToSource = "../../../Desktop/sirius_out/"
+
+pathToRegions = "../../../Desktop/sirius_out/regions.txt"
+pathToResults = "result/"
+pathToOut = "rmsout.txt"
 
 
-final_check(pathWithRedions,pathWithSource,pathToResults,pathToOut)
-
+final_check(pathToRegions,pathToSource,pathToResults,pathToOut)
 histo(pathToOut,0.1)

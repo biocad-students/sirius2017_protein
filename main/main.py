@@ -18,7 +18,7 @@ from sampling.sampl_1 import samples
 IssmartWork = True
 IsDebugReq = False
 THREADNUM = 1
-COUNT = 10
+COUNT = 1
 if len(sys.argv) > 1:
 	regionPath = sys.argv[1] + "regions.txt"
 	structsPath = sys.argv[1]
