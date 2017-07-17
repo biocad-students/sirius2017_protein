@@ -51,7 +51,7 @@ def final_check(path1,path2,path3,path4):
             rms = rmsd(ourchain,notourchain)
 
             result.write(str(cdr3[counter][0])+" "+str(rms)+"\n")
-            print("Done: ",)
+            print("Done: ",str(cdr3[counter][0]))
         except:
             print("Error: reading ",str(cdr3[counter][0]))
     result.close()
