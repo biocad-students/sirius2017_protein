@@ -74,15 +74,15 @@ def preparing():
         thrd.join()
 
 def Work(cdr3,calcstart,calcstop,files):
-    calcstart = 321
-    calcstop = 323
+    #calcstart = 321
+    #calcstop = 323
     print("Booting thread #",os.getpid())
 ## MAIN PROGRAM ##
     for counter in range(calcstart,calcstop):
         iscontinue = False
         for x in files:
             if(x == cdr3[counter][0]):
-                print("Skipped: ",cdr3[counter])
+                print("Skipped ",cdr3[counter])
                 iscontinue = True
         if(iscontinue):
             continue
@@ -106,6 +106,8 @@ def Work(cdr3,calcstart,calcstop,files):
                 for i in range(len(sub)):
                     debugI(str(i), sub[i])
                 # Соединяет цепокич в одну
+                for  x in range(len(sub)):
+                    writeres("piece"+str(x)+".pdb",sub[x])
                 merged = smartsamp(sub)
                 debugI("merged",merged)
                 combined = imposer(merged,firstRes,lastRes)
