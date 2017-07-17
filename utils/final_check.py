@@ -21,7 +21,8 @@ def final_check(path1,path2,path3,path4):
     tmp = []
     result = open(path4,"w")
     for x in lines:
-        tmp.append(x.split(' '))
+        if(len(x)>0):
+            tmp.append(x.split(' '))
     for x in range(len(tmp)):
         cordstart = len(tmp[x][1]+tmp[x][2]+tmp[x][3]+tmp[x][4]+tmp[x][5])
         cordstop = cordstart+len(tmp[x][6])
