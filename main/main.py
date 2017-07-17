@@ -12,7 +12,7 @@ from sampling.smartsampling import *
 from Bio.PDB.Chain import Chain
 from algo.CCD import *
 from sampling.sampl_1 import samples
-
+from params.Class import MyClass
 
 
 TypeOfWork = 0
@@ -143,6 +143,7 @@ def Work(cdr3,calcstart,calcstop,files):
                     writeres(folderwithresult+directory+str(instance)+".pdb",chainArray)
         elif(TypeOfWork == 3):
             pass
+            #cleverClass = MyClass()
         else:
             print("Unknown way ",TypeOfWork)
             break
