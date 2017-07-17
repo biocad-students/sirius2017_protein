@@ -34,3 +34,7 @@ from sampling.smartsampling import *
 # c = read("../pdb/3.pdb")
 # struct = smartsamp([c.child_list,b.child_list,a.child_list])
 # writeres("out.pdb",struct)
+
+# CLEVER SAMPLING
+finalresidue = cleversamp('ADKASG')
+writeres("final.pdb",finalresidue)
