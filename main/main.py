@@ -15,7 +15,10 @@ from sampling.sampl_1 import samples
 
 
 
-IssmartWork = True
+TypeOfWork = 0
+# 1 - 1 ветка
+# 2 - 2 ветка
+# 3 - 3 ветка
 IsDebugReq = False
 THREADNUM = 1
 COUNT = 1
@@ -39,7 +42,7 @@ def debugI(name,structure):
 				print(str(structure))
 
 def preparing():
-    print("Booting settings:\nIssmartWork {}\n IsDebugReq {}\n count {}".format(IssmartWork,IsDebugReq,COUNT))
+    print("Booting settings:\n TypeOfWork {}\n IsDebugReq {}\n count {}".format(TypeOfWork,IsDebugReq,COUNT))
     os.system("mkdir -p "+folderwithresult)
     try:
         file = open((folderwithresult+"info.log"),"w")
@@ -97,7 +100,7 @@ def Work(cdr3,calcstart,calcstop,files):
         # 1 STEP
         letterList = [letter(x) for x in ourchain.child_list]
         os.system("mkdir -p "+folderwithresult+str(cdr3[counter][0]))
-        if(IssmartWork):
+        if(TypeOfWork == 2):
             _preSub = loopSubstring(''.join(letterList),COUNT,None,structsPath)
             for fileenum in range(len(_preSub)):
                 directory = str(cdr3[counter][0])+"/"
@@ -106,8 +109,6 @@ def Work(cdr3,calcstart,calcstop,files):
                 for i in range(len(sub)):
                     debugI(str(i), sub[i])
                 # Соединяет цепокич в одну
-                for  x in range(len(sub)):
-                    writeres("piece"+str(x)+".pdb",sub[x])
                 merged = smartsamp(sub)
                 debugI("merged",merged)
                 combined = imposer(merged,firstRes,lastRes)
@@ -123,7 +124,7 @@ def Work(cdr3,calcstart,calcstop,files):
                     secondPart = ourres[cdr3[counter][2]:]
                     chainArray = firstPart+afterCCD[1:-1]+secondPart
                     writeres(folderwithresult+directory+str(fileenum)+".pdb",chainArray)
-        else:
+        elif(TypeOfWork == 1):
             sa = samples(letterList,COUNT)
             directory = str(cdr3[counter][0])+"/"
             for instance in range(len(sa)):
@@ -140,4 +141,9 @@ def Work(cdr3,calcstart,calcstop,files):
                     secondPart = ourres[cdr3[counter][2]:]
                     chainArray = firstPart+afterCCD[1:-1]+secondPart
                     writeres(folderwithresult+directory+str(instance)+".pdb",chainArray)
+        elif(TypeOfWork == 3):
+            pass
+        else:
+            print("Unknown way ",TypeOfWork)
+            break
 preparing()
