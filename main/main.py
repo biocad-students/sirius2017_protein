@@ -15,12 +15,12 @@ from sampling.sampl_1 import samples
 #from params.Class import MyClass
 
 
-TypeOfWork = 2
+TypeOfWork = 1
 # 1 - 1 ветка
 # 2 - 2 ветка
 # 3 - 3 ветка
 IsDebugReq = False
-THREADNUM = 1
+THREADNUM = 2
 COUNT = 1
 if len(sys.argv) > 1:
     regionPath = sys.argv[1] + "regions.txt"
@@ -111,10 +111,7 @@ def Work(cdr3,calcstart,calcstop,files):
                 # Соединяет цепокич в одну
                 merged = smartsamp(sub)
                 debugI("merged",merged)
-                writeres("beforeImposer.pdb",merged)
                 combined = imposer(merged,firstRes,lastRes)
-                writeres("afterImposer.pdb",combined)
-                print("stope")
                 debugI("combined",combined)
                 #5 CCD
                 #writeres("")
@@ -133,6 +130,8 @@ def Work(cdr3,calcstart,calcstop,files):
             for instance in range(len(sa)):
                 index = 0
                 combined = imposer(sa[instance],firstRes,lastRes)
+                writeres("folder/combined"+str(cdr3[counter][0])+".pdb",combined)
+                writeres("folder/target"+str(cdr3[counter][0])+".pdb",[lastRes,lastRes])
                 debugI("combined",combined)
                 #5 CCD
                 afterCCD = CCD(combined,lastRes,feedback = False)
