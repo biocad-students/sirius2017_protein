@@ -12,12 +12,14 @@ def copy_to(amino1, amino2, arr_2=[]):
 def rotate_radical(amino1, y, z):
     """выставляет двугранный угол z=c-ca-n-cb и плоский угол n-ca-cb=y"""
     amino2=amino1.copy()
-    amino3 = rot1(amino2, z,  amino2['C'].get_vector(), amino2['CA'].get_vector(), amino2['N'].get_vector(), amino2['CB'].get_vector())
-    copy_to(amino3, amino2)
-    amino3_copy=amino3.copy()
-    amino = rotate_amino(amino3, amino3_copy['N'].get_vector(), amino3_copy['CA'].get_vector(), amino3_copy['CB'].get_vector(), amino3_copy['CB'].get_vector(), y)
-    copy_to(amino, amino3_copy)
-    return amino
+    amino2_copy=amino2.copy()
+    angle = y + 2*calc_angle(amino2_copy['N'].get_vector(), amino2_copy['CA'].get_vector(), amino2_copy['CB'].get_vector())
+    amino3 = rotate_amino(amino2, amino2_copy['N'].get_vector(), amino2_copy['CA'].get_vector(), amino2_copy['CB'].get_vector(), amino2_copy['CB'].get_vector(), angle)
+    copy_to(amino3, amino2_copy)
+    amino3_copy = amino3.copy()
+    amino3 = rot1(amino3, z,  amino3['C'].get_vector(), amino3['CA'].get_vector(), amino3['N'].get_vector(), amino3['CB'].get_vector())
+    copy_to(amino3, amino3_copy)
+    return amino3
 
 def change_dist(amino, dis, A, B):
     coord = A - B
@@ -34,10 +36,12 @@ def change_dist(amino, dis, A, B):
 def rotate_main(_amino1, _amino2, main):
     amino1=_amino1.copy()
     amino2=_amino2.copy()
-    rotated_amino1 = rotate_amino(amino1, amino1['N'].get_vector(), amino1['CA'].get_vector(), amino1['C'].get_vector(), amino1['C'].get_vector(), main[6])
-    rotated_amino2 = rotate_amino(amino2, amino2['N'].get_vector(), amino2['CA'].get_vector(), amino2['C'].get_vector(), amino2['C'].get_vector(), main[7])
-    rotated_amino2 = moveTo(rotated_amino1, rotated_amino2, [main[0], main[1], main[2]], main[5], main[4], main[3])
-    return [rotated_amino1, rotated_amino2]
+    #rotated_amino1 = rotate_amino(amino1, amino1['N'].get_vector(), amino1['CA'].get_vector(), amino1['C'].get_vector(), amino1['C'].get_vector(), main[6])
+    #rotated_amino2 = rotate_amino(amino2, amino2['N'].get_vector(), amino2['CA'].get_vector(), amino2['C'].get_vector(), amino2['C'].get_vector(), main[7])
+    #rotated_amino2 = moveTo(rotated_amino1, rotated_amino2, [main[0], main[1], main[2]], main[5], main[4], main[3])
+    amino2 = moveTo(amino1, amino2, [main[0], main[1], main[2]], main[5], main[4], main[3])
+    #return [rotated_amino1, rotated_amino2]
+    return [amino1, amino2]
 
 def rot_val(amino1, x1):
     amino = amino1.copy()
@@ -248,15 +252,14 @@ def cnt_angles(letter):
     else:
         return -2
 
-def main():
+def generate_kmer(str, angles_and_dist):
     structure = read('/home/ludmila/git/sirius2017_protein/sampling/aminos_out.pdb', "test")
     arr = {}
     for residue in structure:
         arr[seq1(residue.get_resname())] = residue
-    am1='T'
-    am2='A'
-    am3='S'
-    angles_and_dist=[-3.7548156, 178.12007, -106.46927, 119.63612, 123.63427, 1.3465911, 113.51516, 110.74306, 137.67319, 170.19287, -120.67031, 118.63731, 124.336075, 1.3409338, 110.74306, 110.09849, 173.68527, 179.59863, -154.52032, 120.319786, 123.57929, 1.3424668, 110.09849, 112.402664, 160.56654, 169.04048, -129.12004, 118.35881, 125.06439, 1.3427035, 112.402664, 107.13795, 112.36464, 121.535805, 73.16762, 110.11092, 126.9722, 75.921165]
+    am1=str[0]
+    am2=str[1]
+    am3=str[2]
     main1 = angles_and_dist[0:8]
     main2 = angles_and_dist[8:16]
     main3 = angles_and_dist[16:24]
@@ -270,18 +273,16 @@ def main():
     amino1 = arr[am1]
     amino2 = arr[am2]
     amino3 = arr[am3]
+    aminoA = rotate_amino(arr['A'], arr['A']['N'].get_vector(), arr['A']['CA'].get_vector(), arr['A']['C'].get_vector(), arr['A']['C'].get_vector(), main1[6])
+    amino1 = rotate_amino(amino1, amino1['N'].get_vector(), amino1['CA'].get_vector(), amino1['C'].get_vector(), amino1['C'].get_vector(), main1[7])
+    amino2 = rotate_amino(amino2, amino2['N'].get_vector(), amino2['CA'].get_vector(), amino2['C'].get_vector(), amino2['C'].get_vector(), main2[7])
+    amino3 = rotate_amino(amino3, amino3['N'].get_vector(), amino3['CA'].get_vector(), amino3['C'].get_vector(), amino3['C'].get_vector(), main3[7])
     amino1 = rotRadicalInAmino(amino1, radical1, am1)
     amino2 = rotRadicalInAmino(amino2, radical2, am2)
     amino3 = rotRadicalInAmino(amino3, radical3, am3)
-    pair1 = rotate_main(arr['A'], amino1, main1)
-    #writeres('/tmp/AT.pdb', pair1)
+    pair1 = rotate_main(aminoA, amino1, main1)
     pair2 = rotate_main(pair1[1], amino2, main2)
-    #writeres('/tmp/TA.pdb', pair2)
     pair3 = rotate_main(pair2[1], amino3, main3)
-    #writeres('/tmp/AS.pdb', pair3)
-    pair4 = rotate_main(pair3[1], arr['A'], main4)
-    #writeres('/tmp/SA.pdb', pair4)
-    writeres('/tmp/TAS.pdb', [pair2[0]]+[pair3[0]]+[pair4[0]])
-
-if __name__ == "__main__":
-    main()
+    aminoA = rotate_amino(arr['A'], arr['A']['N'].get_vector(), arr['A']['CA'].get_vector(), arr['A']['C'].get_vector(), arr['A']['C'].get_vector(), main1[7])
+    pair4 = rotate_main(pair3[1], aminoA, main4)
+    return [pair2[0]]+[pair3[0]]+[pair4[0]]
