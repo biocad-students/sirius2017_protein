@@ -88,8 +88,8 @@ def cleversamp(var):
             fixed = [finalresidue[-2]['N'],finalresidue[-2]['CA'],finalresidue[-2]['C'],finalresidue[-1]['N'],finalresidue[-1]['CA'],finalresidue[-1]['C']]
             finalresidue.pop()
             finalresidue.pop()
-            print(residues)
             finalresidue.extend(residues)
+            print(finalresidue)
             moving = [finalresidue[-3]['N'],finalresidue[-3]['CA'],finalresidue[-3]['C'],finalresidue[-2]['N'],finalresidue[-2]['CA'],finalresidue[-2]['C']]
             sp = Superimposer()
             sp.set_atoms(fixed,moving)
@@ -101,11 +101,13 @@ def cleversamp(var):
             index+=1
             if(isnew):
                 best = finalresidue
+                isnew = False
             else:
                 trms = rmsd(best,finalresidue)
                 if(trms<rms):
                     best = finalresidue
+    index = 0
     for x in best:
-        x.id = (' ',best,' ')
-        best+=1
+        x.id = (' ',index,' ')
+        index+=1
     return best

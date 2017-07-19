@@ -15,7 +15,7 @@ from sampling.sampl_1 import samples
 #from params.Class import MyClass
 
 
-TypeOfWork = 1
+TypeOfWork = 2
 # 1 - 1 ветка
 # 2 - 2 ветка
 # 3 - 3 ветка
@@ -23,11 +23,11 @@ IsDebugReq = False
 THREADNUM = 1
 COUNT = 1
 if len(sys.argv) > 1:
-	regionPath = sys.argv[1] + "regions.txt"
-	structsPath = sys.argv[1]
+    regionPath = sys.argv[1] + "regions.txt"
+    structsPath = sys.argv[1]
 else:
-	regionPath = "../../../Desktop/sirius_out/regions.txt"
-	structsPath = "../../../Desktop/sirius_out/"
+    regionPath = "../../../Desktop/sirius_out/regions.txt"
+    structsPath = "../../../Desktop/sirius_out/"
 
 folderwithresult = "result/"
 
@@ -111,7 +111,10 @@ def Work(cdr3,calcstart,calcstop,files):
                 # Соединяет цепокич в одну
                 merged = smartsamp(sub)
                 debugI("merged",merged)
+                writeres("beforeImposer.pdb",merged)
                 combined = imposer(merged,firstRes,lastRes)
+                writeres("afterImposer.pdb",combined)
+                print("stope")
                 debugI("combined",combined)
                 #5 CCD
                 #writeres("")
