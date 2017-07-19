@@ -1,5 +1,5 @@
 #требуется обьявить обьект с идентификатором
-f = open('kmersnd.txt')
+f = open('../sampling/kmersnd.txt')
 class MyClass:
     def __init__(self, num):
         mas = []
