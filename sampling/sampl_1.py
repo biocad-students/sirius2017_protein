@@ -67,7 +67,7 @@ def generate(s, angles):
         c=s[i]
         if len(result) != 0:
             last = result[-1]
-            res = moveTo(last,arr[c], angles[i-1])
+            res = moveTo(last,arr[c], angles[i-1], 1.4, 123, 120)
             result.append(res)
         else:
             result.append(arr[c])
@@ -129,12 +129,12 @@ def get_H(amino):
     else:
         return amino['H'].get_vector()
 
-def moveTo(last, amino1, angles):
+def moveTo(last, amino1, angles, dis, ang_OCN, ang_CNH):
     amino = amino1.copy()
     N = amino['N'].get_vector()
     CA = last['CA'].get_vector()
     C = last['C'].get_vector()
-    amino=move_dist(amino, 1.4, C-CA, C, N)
+    amino=move_dist(amino, dis, C-CA, C, N)
     #до сюда выставляется расстояние СN=1.4, дигидральный угол CA,C,O,N=180
     N = amino['N'].get_vector()
     O = last['O'].get_vector()
@@ -152,13 +152,13 @@ def moveTo(last, amino1, angles):
     CA = last['CA'].get_vector()
     O = last['O'].get_vector()
     C = last['C'].get_vector()
-    amino = rotate_amino(amino, O, C, CA, N, rad(123))
+    amino = rotate_amino(amino, O, C, CA, N, rad(ang_OCN))
     #выставился угол 123 градуса
     N = amino['N'].get_vector()
     H = get_H(amino)
     O = last['O'].get_vector()
     C = last['C'].get_vector()
-    amino = rotate_amino(amino, C, N, O, H, rad(120))
+    amino = rotate_amino(amino, C, N, O, H, rad(ang_CNH))
     #выставляем 120 градусов
     CA = last['CA'].get_vector()
     C = last['C'].get_vector()
