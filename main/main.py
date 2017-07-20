@@ -12,16 +12,16 @@ from sampling.smartsampling import *
 from Bio.PDB.Chain import Chain
 from algo.CCD import *
 from sampling.sampl_1 import samples
-#from params.Class import MyClass
+from params.Class import MyClass
 
 
-TypeOfWork = 1
+TypeOfWork = 3
 # 1 - 1 ветка
 # 2 - 2 ветка
 # 3 - 3 ветка
 IsDebugReq = False
-THREADNUM = 2
-COUNT = 1
+THREADNUM = 1
+COUNT = 2
 if len(sys.argv) > 1:
     regionPath = sys.argv[1] + "regions.txt"
     structsPath = sys.argv[1]
@@ -60,15 +60,18 @@ def preparing():
         while string:
             cordstart = len(string[1]+string[2]+string[3]+string[4]+string[5])
             cordstop = cordstart+len(string[6])
-            cdr3.append([string[0],cordstart,cordstop])
+            loop = string[6]
+            cdr3.append([string[0],cordstart,cordstop,loop])
             string = f.readline().split()
     threads = []
     lengthP = (len(cdr3))/THREADNUM
     calcpos = 0
     files = os.listdir(folderwithresult)
+    if(TypeOfWork == 3):
+        mas = MyClass()
     for n in range(THREADNUM):
         print("new thread: #",n," with range [",round(calcpos),",",round(calcpos+lengthP),"]\n")
-        threads.append(multiprocessing.Process(target=Work,args = (cdr3,round(calcpos),round(calcpos+lengthP),files)))
+        threads.append(multiprocessing.Process(target=Work,args = (cdr3,round(calcpos),round(calcpos+lengthP),files,mas)))
         calcpos+=lengthP
 
     for thrd in threads:
@@ -76,7 +79,7 @@ def preparing():
     for thrd in threads:
         thrd.join()
 
-def Work(cdr3,calcstart,calcstop,files):
+def Work(cdr3,calcstart,calcstop,files,mas):
     #calcstart = 321
     #calcstop = 323
     print("Booting thread #",os.getpid())
@@ -130,8 +133,6 @@ def Work(cdr3,calcstart,calcstop,files):
             for instance in range(len(sa)):
                 index = 0
                 combined = imposer(sa[instance],firstRes,lastRes)
-                writeres("folder/combined"+str(cdr3[counter][0])+".pdb",combined)
-                writeres("folder/target"+str(cdr3[counter][0])+".pdb",[lastRes,lastRes])
                 debugI("combined",combined)
                 #5 CCD
                 afterCCD = CCD(combined,lastRes,feedback = False)
@@ -144,8 +145,8 @@ def Work(cdr3,calcstart,calcstop,files):
                     chainArray = firstPart+afterCCD[1:-1]+secondPart
                     writeres(folderwithresult+directory+str(instance)+".pdb",chainArray)
         elif(TypeOfWork == 3):
-            pass
-            #cleverClass = MyClass()
+                struct = cleversamp(cdr3[counter][3],mas,COUNT)
+
         else:
             print("Unknown way ",TypeOfWork)
             break

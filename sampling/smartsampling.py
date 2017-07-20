@@ -1,10 +1,13 @@
 from Bio.PDB import *
+
 from Bio.PDB.Structure import Structure
 from utils.utilits import *
 from geometry.transform import *
 from sampling.sampl_1 import rot1
-import numpy,math
+import numpy,math,sys
 from utils.io import *
+from sampling.read_k import *
+from random import shuffle
 
 
 def fastimpose(fixedRes,movingRes):
@@ -70,44 +73,24 @@ def getresidue(name):
     return [read(path+name+".pdb").child_list]
 
 
-def cleversamp(var):
+
+def cleversamp(var,mas,COUNT):
     """
         3 вариант сэмплирования
         Параметры:
             structure - список списков 3-меров
     """
-    finalresidue = getresidue(var[0:3])[0]
-    resindex = 0
-    index = 1
-    while(len(var)+1>index+3):
-        rms = 1000
-        isnew = True
-        tmpresidue = finalresidue
-        for residues in getresidue(var[index:index+3]):
-            finalresidue = tmpresidue
-            fixed = [finalresidue[-2]['N'],finalresidue[-2]['CA'],finalresidue[-2]['C'],finalresidue[-1]['N'],finalresidue[-1]['CA'],finalresidue[-1]['C']]
-            finalresidue.pop()
-            finalresidue.pop()
-            finalresidue.extend(residues)
-            print(finalresidue)
-            moving = [finalresidue[-3]['N'],finalresidue[-3]['CA'],finalresidue[-3]['C'],finalresidue[-2]['N'],finalresidue[-2]['CA'],finalresidue[-2]['C']]
-            sp = Superimposer()
-            sp.set_atoms(fixed,moving)
-            for residue in range(index,len(finalresidue)):
-                for atom in finalresidue[residue]:
-                    v = atom.get_vector()
-                    cord = numpy.dot(v._ar,sp.rotran[0])+sp.rotran[1]
-                    atom.set_coord(cord)
-            index+=1
-            if(isnew):
-                best = finalresidue
-                isnew = False
-            else:
-                trms = rmsd(best,finalresidue)
-                if(trms<rms):
-                    best = finalresidue
-    index = 0
-    for x in best:
-        x.id = (' ',index,' ')
-        index+=1
-    return best
+    firstChar = var[0:3]
+    firstList = mas.getValue(firstChar)
+    shuffle(firstList)
+    firstList = firstList[0:COUNT]
+    for firstElement in firstList:
+        todoLine = var[3:]
+        tmp = generate_kmer(var,firstElement)
+        while(todoLine>0):
+            angles = mas.getValue(todoLine[0:3])
+            residue = []
+            for angle in angles:
+                kmer = generate_kmer(todoLine[0:3],angle)
+                
+    exit()

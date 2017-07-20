@@ -7,6 +7,7 @@ from geometry.movements import *
 from utils.final_check import final_check
 from math import pi
 from sampling.smartsampling import *
+
 # SHIFT
 # struct = read("../pdb/15477.pdb")
 # struct = shift(struct,1.8)
@@ -36,5 +37,16 @@ from sampling.smartsampling import *
 # writeres("out.pdb",struct)
 
 # CLEVER SAMPLING
-finalresidue = cleversamp('ADKASG')
-writeres("final.pdb",finalresidue)
+# finalresidue = cleversamp('ADKASG')
+# writeres("final.pdb",finalresidue)
+
+# GRAPHIC
+
+struct = read("molec.pdb")
+index = 0
+for x in struct:
+    x.id = (' ',index,' ')
+    index+=1
+for x in range(5):
+    struct = rot(struct,pi/6,start = 1,isNewCalcReq = 0)
+    writeres("rot"+str(x)+".pdb",struct)

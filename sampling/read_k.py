@@ -1,7 +1,9 @@
 from Bio.SeqUtils import *
+import sys
+sys.path.append("../")
 from geometry.transform import *
 from utils.io import *
-from sampl_1 import *
+from sampling.sampl_1 import *
 
 def copy_to(amino1, amino2, arr_2=[]):
     arr=['H', 'N', 'CA', 'C', 'O', 'HA']+arr_2
@@ -253,7 +255,7 @@ def cnt_angles(letter):
         return -2
 
 def generate_kmer(str, angles_and_dist):
-    structure = read('/home/ludmila/git/sirius2017_protein/sampling/aminos_out.pdb', "test")
+    structure = read('../files/aminos_out.pdb', "test")
     arr = {}
     for residue in structure:
         arr[seq1(residue.get_resname())] = residue
