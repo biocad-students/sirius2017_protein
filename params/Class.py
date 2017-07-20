@@ -2,6 +2,7 @@
 f = open('kmersnd.txt')
 class MyClass:
     def __init__(self, num):
+        arr = {}
         mas = []
         masnext = []
         mas2 = []
