@@ -84,14 +84,29 @@ def cleversamp(var,mas,COUNT):
     firstList = mas.getValue(firstChar)
     shuffle(firstList)
     firstList = firstList[0:COUNT]
+    bestResidue = []
     for firstElement in firstList:
         todoLine = var[3:]
         tmp = generate_kmer(var,firstElement)
+        rms = 1000
         while(len(todoLine)>0):
             angles = mas.getValue(todoLine[0:3])
-            residue = []
+            residue = bestResidue
             for angle in angles:
-                print(todoLine[0:3])
                 kmer = generate_kmer(todoLine[0:3],angle)
-
-    exit()
+                fixed = [bestResidue[-2]['N'],bestResidue[-2]['CA'],bestResidue[-1]['C'],bestResidue[-1]['N'],bestResidue[-1]['CA'],bestResidue[-1]['C']]
+                moving = [kmer[0]['N'],kmer[0]['CA'],kmer[0]['C'],kmer[1]['N'],kmer[1]['CA'],kmer[1]['C']]
+                sup = Superimposer()
+                sup.set_atoms(fixed,moving)
+                for residues in kmer:
+                    for atom in residues:
+                        v = atom.get_vector()
+                        cord = numpy.dot(v._ar,sup.rotran[0])+sup.rotran[1]
+                        atom.set_coord(cord)
+                residues.pop(-4)
+                residues.pop(-5)
+                if(rms>sup.rms):
+                    rms = sup.rms
+                    bestResidue = residues
+            todoLine.pop(0)
+    return bestResidue
