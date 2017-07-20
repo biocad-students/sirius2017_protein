@@ -10,7 +10,6 @@ def final_check(path1,path2,path3,path4):
         path2 - папка с нашими результатами
         path3 - папка с эталонами
         path4 - файл с результатами сравнения
-        extrashift - сдвиг нумерации
 
     cdr3 хранит: имя файла | нач. индекс петельки | кон. индекс петельки
     """
@@ -22,7 +21,8 @@ def final_check(path1,path2,path3,path4):
     tmp = []
     result = open(path4,"w")
     for x in lines:
-        tmp.append(x.split(' '))
+        if(len(x)>0):
+            tmp.append(x.split(' '))
     for x in range(len(tmp)):
         cordstart = len(tmp[x][1]+tmp[x][2]+tmp[x][3]+tmp[x][4]+tmp[x][5])
         cordstop = cordstart+len(tmp[x][6])
@@ -51,7 +51,7 @@ def final_check(path1,path2,path3,path4):
             rms = rmsd(ourchain,notourchain)
 
             result.write(str(cdr3[counter][0])+" "+str(rms)+"\n")
-            print("Done: ",)
+            print("Done: ",str(cdr3[counter][0]))
         except:
             print("Error: reading ",str(cdr3[counter][0]))
     result.close()

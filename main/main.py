@@ -12,19 +12,22 @@ from sampling.smartsampling import *
 from Bio.PDB.Chain import Chain
 from algo.CCD import *
 from sampling.sampl_1 import samples
+from params.Class import MyClass
 
 
-
-IssmartWork = True
+TypeOfWork = 3
+# 1 - 1 ветка
+# 2 - 2 ветка
+# 3 - 3 ветка
 IsDebugReq = False
 THREADNUM = 1
-COUNT = 1
+COUNT = 2
 if len(sys.argv) > 1:
-	regionPath = sys.argv[1] + "regions.txt"
-	structsPath = sys.argv[1]
+    regionPath = sys.argv[1] + "regions.txt"
+    structsPath = sys.argv[1]
 else:
-	regionPath = "../../../Desktop/sirius_out/regions.txt"
-	structsPath = "../../../Desktop/sirius_out/"
+    regionPath = "../../../Desktop/sirius_out/regions.txt"
+    structsPath = "../../../Desktop/sirius_out/"
 
 folderwithresult = "result/"
 
@@ -39,7 +42,7 @@ def debugI(name,structure):
 				print(str(structure))
 
 def preparing():
-    print("Booting settings:\nIssmartWork {}\n IsDebugReq {}\n count {}".format(IssmartWork,IsDebugReq,COUNT))
+    print("Booting settings:\n TypeOfWork {}\n IsDebugReq {}\n count {}".format(TypeOfWork,IsDebugReq,COUNT))
     os.system("mkdir -p "+folderwithresult)
     try:
         file = open((folderwithresult+"info.log"),"w")
@@ -57,15 +60,18 @@ def preparing():
         while string:
             cordstart = len(string[1]+string[2]+string[3]+string[4]+string[5])
             cordstop = cordstart+len(string[6])
-            cdr3.append([string[0],cordstart,cordstop])
+            loop = string[6]
+            cdr3.append([string[0],cordstart,cordstop,loop])
             string = f.readline().split()
     threads = []
     lengthP = (len(cdr3))/THREADNUM
     calcpos = 0
-
+    files = os.listdir(folderwithresult)
+    if(TypeOfWork == 3):
+        mas = MyClass()
     for n in range(THREADNUM):
         print("new thread: #",n," with range [",round(calcpos),",",round(calcpos+lengthP),"]\n")
-        threads.append(multiprocessing.Process(target=Work,args = (cdr3,round(calcpos),round(calcpos+lengthP))))
+        threads.append(multiprocessing.Process(target=Work,args = (cdr3,round(calcpos),round(calcpos+lengthP),files,mas)))
         calcpos+=lengthP
 
     for thrd in threads:
@@ -73,12 +79,19 @@ def preparing():
     for thrd in threads:
         thrd.join()
 
-def Work(cdr3,calcstart,calcstop):
-    calcstart = 860
-    calcstop = 864
+def Work(cdr3,calcstart,calcstop,files,mas):
+    #calcstart = 321
+    #calcstop = 323
     print("Booting thread #",os.getpid())
 ## MAIN PROGRAM ##
     for counter in range(calcstart,calcstop):
+        iscontinue = False
+        for x in files:
+            if(x == cdr3[counter][0]):
+                print("Skipped ",cdr3[counter])
+                iscontinue = True
+        if(iscontinue):
+            continue
         ourpdb = read(structsPath+str(cdr3[counter][0])+".pdb")
         ourres = ourpdb.child_list
         ourchain = Chain(0)
@@ -89,8 +102,8 @@ def Work(cdr3,calcstart,calcstop):
         print("Working with ",cdr3[counter])
         # 1 STEP
         letterList = [letter(x) for x in ourchain.child_list]
-        os.mkdir(folderwithresult+str(cdr3[counter][0]))
-        if(IssmartWork):
+        os.system("mkdir -p "+folderwithresult+str(cdr3[counter][0]))
+        if(TypeOfWork == 2):
             _preSub = loopSubstring(''.join(letterList),COUNT,None,structsPath)
             for fileenum in range(len(_preSub)):
                 directory = str(cdr3[counter][0])+"/"
@@ -102,18 +115,19 @@ def Work(cdr3,calcstart,calcstop):
                 merged = smartsamp(sub)
                 debugI("merged",merged)
                 combined = imposer(merged,firstRes,lastRes)
-                writeres("forP/combined"+str(fileenum)+".pdb",combined)
-                writeres("forP/target"+str(fileenum)+".pdb",[lastRes,lastRes])
                 debugI("combined",combined)
                 #5 CCD
                 #writeres("")
                 afterCCD = CCD(combined,lastRes,feedback = False)
                 # 6 скл
-                firstPart = ourres[0:cdr3[counter][1]]
-                secondPart = ourres[cdr3[counter][2]:]
-                chainArray = firstPart+afterCCD[1:-1]+secondPart
-                writeres(folderwithresult+directory+str(fileenum)+".pdb",chainArray)
-        else:
+                if(afterCCD == None):
+                    print("there is no peteylka :(. ",counter,instance)
+                else:
+                    firstPart = ourres[0:cdr3[counter][1]]
+                    secondPart = ourres[cdr3[counter][2]:]
+                    chainArray = firstPart+afterCCD[1:-1]+secondPart
+                    writeres(folderwithresult+directory+str(fileenum)+".pdb",chainArray)
+        elif(TypeOfWork == 1):
             sa = samples(letterList,COUNT)
             directory = str(cdr3[counter][0])+"/"
             for instance in range(len(sa)):
@@ -123,8 +137,17 @@ def Work(cdr3,calcstart,calcstop):
                 #5 CCD
                 afterCCD = CCD(combined,lastRes,feedback = False)
                 # 6 скл
-                firstPart = ourres[0:cdr3[counter][1]]
-                secondPart = ourres[cdr3[counter][2]:]
-                chainArray = firstPart+afterCCD[1:-1]+secondPart
-                writeres(folderwithresult+directory+str(instance)+".pdb",chainArray)
+                if(afterCCD == None):
+                    print("there is no peteylka :(. ",counter,instance)
+                else:
+                    firstPart = ourres[0:cdr3[counter][1]]
+                    secondPart = ourres[cdr3[counter][2]:]
+                    chainArray = firstPart+afterCCD[1:-1]+secondPart
+                    writeres(folderwithresult+directory+str(instance)+".pdb",chainArray)
+        elif(TypeOfWork == 3):
+                struct = cleversamp(cdr3[counter][3],mas,COUNT)
+
+        else:
+            print("Unknown way ",TypeOfWork)
+            break
 preparing()

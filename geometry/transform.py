@@ -46,14 +46,13 @@ def calcnewcord(_veca,_vecb,_vecc,angle):
     M = Eoc * OCd * math.cos(angle) + S * OCd * math.sin(angle) + O
     return M
 
-def rot(structure,angle,start = 0,isNewCalcReq = 1,FA = 'CA',FB = 'C',SA = 'N',SB = 'CA',):
+def rot(structure,angle,start = 0,isNewCalcReq = 1,FA = 'CA',FB = 'C',SA = 'N',SB = 'CA'):
     """
         Поворот структуры вогрук оси С-N
         Параметры:
             structure - структура
             angle - угол поворота радианы
-            start - номер аминокислоты с которой начинать поворот
-            stop - сдвиг конца
+            start - номер аминокислоты с которой начинать поворот !!! иногда модет начинатся с 1 !!!
             FA,FB - атомы первой аминокислоты
             SA,SB - атомы второй аминокислоты
             isNewCalcReq - вычисление дигидрального угла

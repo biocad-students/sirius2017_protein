@@ -1,8 +1,9 @@
 import numpy as np
 from Bio import PDB as pdb
 from geometry.quaternion import Quaternion as Quat
-from math import sqrt, atan2, sin, cos
+from math import sqrt, atan2, sin, cos, pi
 from utils.calc import normalize
+from utils.io import writeres
 
 lst = list
 summa = sum
@@ -41,7 +42,10 @@ def calc_b(loop, endpoint, dot1, dot2, multiplier, O_point, char, diff):	# ri
 
 def do_rotation(loop, endpoint, res_index, char1, char2):
 	dot1 = loop[res_index][char1].get_vector()
-	dot2= loop[res_index][char2].get_vector()
+	if char1 == 'C':
+		dot2 = loop[res_index+1][char2].get_vector()
+	else:
+		dot2 = loop[res_index][char2].get_vector()
 
 	b, c = 0., 0.
 	for char in ['N','CA','C']:
@@ -54,8 +58,10 @@ def do_rotation(loop, endpoint, res_index, char1, char2):
 
 	if char1 == 'N':
 		residues = [[atom for atom in loop[res_index] if not atom.get_name() == 'H']] #φ-вращение
-	else:
+	elif char1 == 'CA':
 		residues = [[loop[res_index]['O']]]	#φ-вращение
+	else:
+		residues = []
 	residues = residues + loop[res_index+1:]	#ψ-вращение
 
 	angle = atan2(-c/sqt,b/sqt)
@@ -64,14 +70,17 @@ def do_rotation(loop, endpoint, res_index, char1, char2):
 
 	dot1, dot2 = dot1.get_array(), dot2.get_array()
 	q = Quat.from_axistrig(sind, cosd, dot2-dot1)
+	if char1 == 'C':
+		res1 = loop[res_index]
+		res2 = loop[res_index+1]
+		old_angle = pdb.calc_dihedral(res1['CA'].get_vector(),res1['C'].get_vector(),res2['N'].get_vector(),res2['CA'].get_vector())
+		if abs(old_angle+angle+pi) > 0.35:
+			#print(old_angle,angle)
+			return None
 	for res in residues:
 		for atom in res:
 			coord = atom.get_vector().get_array()
 			atom.set_coord(q * (coord - dot1)+dot1)
-			#atom.set_coord(matrix_axan_rotation(norm(dot2-dot1), coord, -c/sqt,b/sqt, Eab#))
-			#atom.set_coord(cpp_rot(dot1, dot2, coord, -c/sqt, b/sqt, Eab))
-			#atom.set_coord(calcnewcord(dot1, dot2, coord, -c/sqt,b/sqt,Eab))
-
 
 def CCD(loop, endpoint, feedback=False, save_every_loop=False):
 	if feedback: #Отладочная информация
@@ -85,8 +94,11 @@ def CCD(loop, endpoint, feedback=False, save_every_loop=False):
 		for i1, residue in enumerate(loop):
 			if i>0:	#Двигаем ото всех кроме первого residue
 				do_rotation(loop, endpoint, i1, 'N', 'CA') #Сначала φ-вращение
+				#if i1<len(loop)-1:
+					#do_rotation(loop, endpoint, i1, 'C', 'N')
 				do_rotation(loop, endpoint, i1, 'CA', 'C') #Затем ψ-вращение
-
+				if save_every_loop:
+					writeres(str(i)+'.pdb',loop)
 		N_dist = get_align(loop, endpoint, 'N')
 		CA_dist = get_align(loop, endpoint, 'CA')
 		C_dist = get_align(loop, endpoint, 'C')
