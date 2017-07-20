@@ -1,4 +1,4 @@
-from Bio.SeqUtils import *
+ffrom Bio.SeqUtils import *
 from Bio.PDB import *
 from math import *
 import numpy as np
@@ -22,7 +22,7 @@ def atom_distance(arr):
     mas['OO'] = 2.47
     mas['NN'] = 2.57
     n = 2
-    while n <= len(arr):
+    while n < len(arr):
         amin = arr[n]
         if str(seq1(str(amin.get_resname()))) != 'P':
             H = amin['H']
@@ -95,7 +95,6 @@ def atom_distance(arr):
             if N - C1 < mas['NC']:
                 nar.append(n)
                 nar.append(k)
-                print('13')
             O1 = amin2['O']
             if N - O1 < mas['NO']:
                 nar.append(n)
@@ -208,7 +207,6 @@ def atom_distance(arr):
                     if HA4 - HA9 < mas['HH']:
                         nar.append(n)
                         nar.append(k)
-                        print('35')
                 else:
                     HA1 = amin2['HA']
                     if HA4- HA1 < mas['HH']:
@@ -360,7 +358,6 @@ def atom_distance(arr):
     except IndexError:
         return(itog)
     else:
-        itog.append(nar[0])
         while l < len(nar):
             s = 0
             ch = 0
@@ -372,6 +369,3 @@ def atom_distance(arr):
                 itog.append(nar[l])
             l += 1
         return(itog)
-parser = PDBParser()
-structure = parser.get_structure('a','18374.pdb')
-print(atom_distance(structure[0]['H']))
