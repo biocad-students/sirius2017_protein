@@ -1,7 +1,7 @@
-#требуется обьявить обьект с идентификатором
+#требуется обьявить обьект с идентификатором (3 буквы)
 class MyClass:
     def __init__(self):
-        f = open('../files/kmers.txt')
+        f = open('kmersnd.txt'#вставьте сюда путь до этого файла)
         arr = {}
         mas = []
         masnext = []
@@ -32,4 +32,9 @@ class MyClass:
                 masnext.append(mas2)
                 mas2 = []
         arr[ind] = masnext
-        self.pos = arr
+        try:
+            value = arr[num]
+        except KeyError:
+            self.pos = []
+        else:
+            self.pos = arr[num]
