@@ -39,14 +39,3 @@ from sampling.smartsampling import *
 # CLEVER SAMPLING
 # finalresidue = cleversamp('ADKASG')
 # writeres("final.pdb",finalresidue)
-
-# GRAPHIC
-
-struct = read("molec.pdb")
-index = 0
-for x in struct:
-    x.id = (' ',index,' ')
-    index+=1
-for x in range(5):
-    struct = rot(struct,pi/6,start = 1,isNewCalcReq = 0)
-    writeres("rot"+str(x)+".pdb",struct)

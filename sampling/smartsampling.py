@@ -87,10 +87,11 @@ def cleversamp(var,mas,COUNT):
     for firstElement in firstList:
         todoLine = var[3:]
         tmp = generate_kmer(var,firstElement)
-        while(todoLine>0):
+        while(len(todoLine)>0):
             angles = mas.getValue(todoLine[0:3])
             residue = []
             for angle in angles:
+                print(todoLine[0:3])
                 kmer = generate_kmer(todoLine[0:3],angle)
-                
+
     exit()
