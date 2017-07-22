@@ -8,6 +8,9 @@ import numpy,math,sys
 from utils.io import *
 from sampling.read_k import *
 from random import shuffle
+import sys
+
+COUNT = 10
 
 
 def fastimpose(fixedRes,movingRes):
@@ -105,7 +108,7 @@ def build(firstElement,var,mas):
         todoLine = todoLine[1:]
     return residues
 
-def cleversamp(var,mas,COUNT):
+def cleversamp(var,mas):
     """
         3 вариант сэмплирования
         Параметры:

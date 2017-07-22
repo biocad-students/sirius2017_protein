@@ -21,7 +21,7 @@ TypeOfWork = 3
 # 3 - 3 ветка
 IsDebugReq = False
 THREADNUM = 1
-COUNT = 3
+COUNT = 1
 if len(sys.argv) > 1:
     regionPath = sys.argv[1] + "regions.txt"
     structsPath = sys.argv[1]
@@ -144,7 +144,7 @@ def Work(cdr3,calcstart,calcstop,files,mas):
                     chainArray = firstPart+afterCCD[1:-1]+secondPart
                     writeres(folderwithresult+directory+str(instance)+".pdb",chainArray)
         elif(TypeOfWork == 3):
-                listoflistofres = cleversamp(''.join(letterList),mas,COUNT)
+                listoflistofres = cleversamp(''.join(letterList),mas)
                 for iterator in range(len(listoflistofres)):
                     combined = imposer(listoflistofres[iterator],firstRes,lastRes)
                     debugI("combined",combined)
