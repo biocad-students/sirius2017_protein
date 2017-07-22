@@ -1,4 +1,4 @@
-f = open('../files/kmers.txt')
+f = open('../params/kmers_np.txt')
 class MyClass:
     def __init__(self):
         mas = []
@@ -34,4 +34,3 @@ class MyClass:
 
     def getValue(self,key):
         return self.pos[key]
-        

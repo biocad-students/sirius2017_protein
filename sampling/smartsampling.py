@@ -73,6 +73,38 @@ def getresidue(name):
     return [read(path+name+".pdb").child_list]
 
 
+def localSuperImpose(residues, kmer):
+    fixed = [residues[-2]['N'],residues[-2]['CA'],residues[-2]['C'],residues[-1]['N'],residues[-1]['CA'],residues[-1]['C']]
+    moving = [kmer[0]['N'],kmer[0]['CA'],kmer[0]['C'],kmer[1]['N'],kmer[1]['CA'],kmer[1]['C']]
+    sup = Superimposer()
+    sup.set_atoms(fixed,moving)
+    return sup
+
+def build(firstElement,var,mas):
+    todoLine = var[3:]
+    residues = firstElement
+    while(len(todoLine)>2):
+        angles = mas.getValue(todoLine[0:3])
+        bestRms = 1000
+        bestKMer = None
+        for angle in angles:
+            kmer = generate_kmer(todoLine[0:3],angle)
+            sup = localSuperImpose(residues, kmer)
+            if sup.rms < bestRms:
+                bestKMer = kmer
+                bestRms = sup.rms
+        sup = localSuperImpose(residues, bestKMer)
+        for residue in bestKMer:
+            for atom in residue:
+                v = atom.get_vector()
+                cord = numpy.dot(v._ar,sup.rotran[0])+sup.rotran[1]
+                atom.set_coord(cord)
+        if(len(todoLine)-len(var)<3):
+            residues.pop(-2)
+            residues.pop(-1)
+        residues.extend(bestKMer)
+        todoLine = todoLine[1:]
+    return residues
 
 def cleversamp(var,mas,COUNT):
     """
@@ -84,37 +116,14 @@ def cleversamp(var,mas,COUNT):
     firstList = mas.getValue(firstChar)
     shuffle(firstList)
     firstList = firstList[0:COUNT]
-    bestResidue = []
+    listOfAllBest = []
     for firstElement in firstList:
-        todoLine = var[3:]
-        tmp = generate_kmer(var,firstElement)
-        rms = 1000
-        while(len(todoLine)>3):
-            print(todoLine)
-            angles = mas.getValue(todoLine[0:3])
-            residue = bestResidue
-            for angle in angles:
-                kmer = generate_kmer(todoLine[0:3],angle)
-                print(todoLine[0:3])
-                print("residue ",residue)
-                if(residue != []):
-                    fixed = [residue[-2]['N'],residue[-2]['CA'],residue[-2]['C'],residue[-1]['N'],residue[-1]['CA'],residue[-1]['C']]
-                    moving = [kmer[0]['N'],kmer[0]['CA'],kmer[0]['C'],kmer[1]['N'],kmer[1]['CA'],kmer[1]['C']]
-                    sup = Superimposer()
-                    sup.set_atoms(fixed,moving)
-                    for residues in kmer:
-                        for atom in residues:
-                            v = atom.get_vector()
-                            cord = numpy.dot(v._ar,sup.rotran[0])+sup.rotran[1]
-                            atom.set_coord(cord)
-                    residues.pop(-4)
-                    residues.pop(-5)
-                    if(rms>sup.rms):
-                        rms = sup.rms
-                        bestResidue = residues
-                else:
-                    bestResidue = kmer
-                    continue
-            todoLine = todoLine[1:]
-    print(bestResidue)
-    return bestResidue
+        kmer = generate_kmer(firstChar,firstElement)
+        builded = build(kmer,var,mas)
+        #print(builded)
+        listOfAllBest.append(builded)
+    code = "\t\t\t\t "
+    for x in listOfAllBest[0]:
+        code+=letter(x)
+    print(code)
+    return listOfAllBest

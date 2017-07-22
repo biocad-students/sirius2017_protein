@@ -230,7 +230,7 @@ def rotRadicalInAmino(amino1, angles, letter):
     if (letter == 'T'):
         amino = rot_thr(amino, rad(angles[2]))
     if (letter == 'V'):
-        amino = rot_asp(amino, rad(angles[2]), rad(angles[3]))
+        amino = rot_val(amino, rad(angles[2]))
     if (letter == 'Y' or letter=='W' or letter=='F'):
         amino = rot_tyr_phe_trp(amino, rad(angles[2]), rad(angles[3]))
     return amino

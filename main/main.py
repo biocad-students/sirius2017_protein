@@ -144,8 +144,20 @@ def Work(cdr3,calcstart,calcstop,files,mas):
                     chainArray = firstPart+afterCCD[1:-1]+secondPart
                     writeres(folderwithresult+directory+str(instance)+".pdb",chainArray)
         elif(TypeOfWork == 3):
-                struct = cleversamp(cdr3[counter][3],mas,COUNT)
-                writeres(folderwithresult+directory+str(counter)+".pdb",struct)
+                listoflistofres = cleversamp(cdr3[counter][3],mas,COUNT)
+                for iterator in range(len(listoflistofres)):
+                    combined = imposer(listoflistofres[iterator],firstRes,lastRes)
+                    debugI("combined",combined)
+                    #5 CCD
+                    afterCCD = CCD(combined,lastRes,feedback = False)
+                    # 6 скл
+                    if(afterCCD == None):
+                        print("there is no peteylka :(. ",counter,iterator)
+                    else:
+                        firstPart = ourres[0:cdr3[counter][1]]
+                        secondPart = ourres[cdr3[counter][2]:]
+                        chainArray = firstPart+afterCCD[1:-1]+secondPart
+                        writeres(folderwithresult+directory+str(iterator)+".pdb",chainArray)
         else:
             print("Unknown way ",TypeOfWork)
             break
