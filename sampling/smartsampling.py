@@ -89,24 +89,32 @@ def cleversamp(var,mas,COUNT):
         todoLine = var[3:]
         tmp = generate_kmer(var,firstElement)
         rms = 1000
-        while(len(todoLine)>0):
+        while(len(todoLine)>3):
+            print(todoLine)
             angles = mas.getValue(todoLine[0:3])
             residue = bestResidue
             for angle in angles:
                 kmer = generate_kmer(todoLine[0:3],angle)
-                fixed = [bestResidue[-2]['N'],bestResidue[-2]['CA'],bestResidue[-1]['C'],bestResidue[-1]['N'],bestResidue[-1]['CA'],bestResidue[-1]['C']]
-                moving = [kmer[0]['N'],kmer[0]['CA'],kmer[0]['C'],kmer[1]['N'],kmer[1]['CA'],kmer[1]['C']]
-                sup = Superimposer()
-                sup.set_atoms(fixed,moving)
-                for residues in kmer:
-                    for atom in residues:
-                        v = atom.get_vector()
-                        cord = numpy.dot(v._ar,sup.rotran[0])+sup.rotran[1]
-                        atom.set_coord(cord)
-                residues.pop(-4)
-                residues.pop(-5)
-                if(rms>sup.rms):
-                    rms = sup.rms
-                    bestResidue = residues
-            todoLine.pop(0)
+                print(todoLine[0:3])
+                print("residue ",residue)
+                if(residue != []):
+                    fixed = [residue[-2]['N'],residue[-2]['CA'],residue[-2]['C'],residue[-1]['N'],residue[-1]['CA'],residue[-1]['C']]
+                    moving = [kmer[0]['N'],kmer[0]['CA'],kmer[0]['C'],kmer[1]['N'],kmer[1]['CA'],kmer[1]['C']]
+                    sup = Superimposer()
+                    sup.set_atoms(fixed,moving)
+                    for residues in kmer:
+                        for atom in residues:
+                            v = atom.get_vector()
+                            cord = numpy.dot(v._ar,sup.rotran[0])+sup.rotran[1]
+                            atom.set_coord(cord)
+                    residues.pop(-4)
+                    residues.pop(-5)
+                    if(rms>sup.rms):
+                        rms = sup.rms
+                        bestResidue = residues
+                else:
+                    bestResidue = kmer
+                    continue
+            todoLine = todoLine[1:]
+    print(bestResidue)
     return bestResidue
