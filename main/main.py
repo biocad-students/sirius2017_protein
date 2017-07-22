@@ -21,7 +21,7 @@ TypeOfWork = 3
 # 3 - 3 ветка
 IsDebugReq = False
 THREADNUM = 1
-COUNT = 1
+COUNT = 5
 if len(sys.argv) > 1:
     regionPath = sys.argv[1] + "regions.txt"
     structsPath = sys.argv[1]
