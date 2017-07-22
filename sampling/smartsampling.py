@@ -115,7 +115,6 @@ def cleversamp(var,mas,COUNT):
     _firstList = mas.getValue(firstChar)
     shuffle(_firstList)
     firstList = _firstList[0:COUNT]
-    print("length ",len(firstList),"\n\n",COUNT)
     listOfAllBest = []
     for firstElement in firstList:
         kmer = generate_kmer(firstChar,firstElement)
