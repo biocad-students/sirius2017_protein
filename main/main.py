@@ -21,7 +21,7 @@ TypeOfWork = 3
 # 3 - 3 ветка
 IsDebugReq = False
 THREADNUM = 1
-COUNT = 2
+COUNT = 1
 if len(sys.argv) > 1:
     regionPath = sys.argv[1] + "regions.txt"
     structsPath = sys.argv[1]
@@ -103,10 +103,10 @@ def Work(cdr3,calcstart,calcstop,files,mas):
         # 1 STEP
         letterList = [letter(x) for x in ourchain.child_list]
         os.system("mkdir -p "+folderwithresult+str(cdr3[counter][0]))
+        directory = str(cdr3[counter][0])+"/"
         if(TypeOfWork == 2):
             _preSub = loopSubstring(''.join(letterList),COUNT,None,structsPath)
             for fileenum in range(len(_preSub)):
-                directory = str(cdr3[counter][0])+"/"
                 # Собирает цепочки по буквам
                 sub = get_residues_by_pos(_preSub[fileenum],"../files/",structsPath)
                 for i in range(len(sub)):
@@ -129,7 +129,6 @@ def Work(cdr3,calcstart,calcstop,files,mas):
                     writeres(folderwithresult+directory+str(fileenum)+".pdb",chainArray)
         elif(TypeOfWork == 1):
             sa = samples(letterList,COUNT)
-            directory = str(cdr3[counter][0])+"/"
             for instance in range(len(sa)):
                 index = 0
                 combined = imposer(sa[instance],firstRes,lastRes)
@@ -146,7 +145,7 @@ def Work(cdr3,calcstart,calcstop,files,mas):
                     writeres(folderwithresult+directory+str(instance)+".pdb",chainArray)
         elif(TypeOfWork == 3):
                 struct = cleversamp(cdr3[counter][3],mas,COUNT)
-
+                writeres(folderwithresult+directory+str(counter)+".pdb",struct)
         else:
             print("Unknown way ",TypeOfWork)
             break
