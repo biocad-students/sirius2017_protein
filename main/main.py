@@ -67,8 +67,7 @@ def preparing():
     lengthP = (len(cdr3))/THREADNUM
     calcpos = 0
     files = os.listdir(folderwithresult)
-    if(TypeOfWork == 3):
-        mas = MyClass()
+    mas = MyClass()
     for n in range(THREADNUM):
         print("new thread: #",n," with range [",round(calcpos),",",round(calcpos+lengthP),"]\n")
         threads.append(multiprocessing.Process(target=Work,args = (cdr3,round(calcpos),round(calcpos+lengthP),files,mas)))
@@ -96,6 +95,7 @@ def Work(cdr3,calcstart,calcstop,files,mas):
         ourres = ourpdb.child_list
         ourchain = Chain(0)
         firstRes = ourres[cdr3[counter][1]-1]
+        #firstRes = ourres[cdr3[counter][1]]
         lastRes =  ourres[cdr3[counter][2]]
         for x in range(cdr3[counter][1]-1,cdr3[counter][2]+1):
             ourchain.add(ourres[x])
@@ -123,7 +123,7 @@ def Work(cdr3,calcstart,calcstop,files,mas):
                 if(afterCCD == None):
                     print("there is no peteylka :(. ",counter,instance)
                 else:
-                    firstPart = ourres[0:cdr3[counter][1]]
+                    firstPart = ourres[0:cdr3[counter][1]-1]
                     secondPart = ourres[cdr3[counter][2]:]
                     chainArray = firstPart+afterCCD[1:-1]+secondPart
                     writeres(folderwithresult+directory+str(fileenum)+".pdb",chainArray)
@@ -144,7 +144,7 @@ def Work(cdr3,calcstart,calcstop,files,mas):
                     chainArray = firstPart+afterCCD[1:-1]+secondPart
                     writeres(folderwithresult+directory+str(instance)+".pdb",chainArray)
         elif(TypeOfWork == 3):
-                listoflistofres = cleversamp(cdr3[counter][3],mas,COUNT)
+                listoflistofres = cleversamp(''.join(letterList),mas,COUNT)
                 for iterator in range(len(listoflistofres)):
                     combined = imposer(listoflistofres[iterator],firstRes,lastRes)
                     debugI("combined",combined)

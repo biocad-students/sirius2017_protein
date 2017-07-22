@@ -81,7 +81,7 @@ def localSuperImpose(residues, kmer):
     return sup
 
 def build(firstElement,var,mas):
-    todoLine = var[3:]
+    todoLine = var[1:]
     residues = firstElement
     while(len(todoLine)>2):
         angles = mas.getValue(todoLine[0:3])
@@ -99,9 +99,8 @@ def build(firstElement,var,mas):
                 v = atom.get_vector()
                 cord = numpy.dot(v._ar,sup.rotran[0])+sup.rotran[1]
                 atom.set_coord(cord)
-        if(len(todoLine)-len(var)<3):
-            residues.pop(-2)
-            residues.pop(-1)
+        residues.pop(-2)
+        residues.pop(-1)
         residues.extend(bestKMer)
         todoLine = todoLine[1:]
     return residues
@@ -120,10 +119,5 @@ def cleversamp(var,mas,COUNT):
     for firstElement in firstList:
         kmer = generate_kmer(firstChar,firstElement)
         builded = build(kmer,var,mas)
-        #print(builded)
         listOfAllBest.append(builded)
-    code = "\t\t\t\t "
-    for x in listOfAllBest[0]:
-        code+=letter(x)
-    print(code)
     return listOfAllBest
