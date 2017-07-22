@@ -112,9 +112,10 @@ def cleversamp(var,mas,COUNT):
             structure - список списков 3-меров
     """
     firstChar = var[0:3]
-    firstList = mas.getValue(firstChar)
-    shuffle(firstList)
-    firstList = firstList[0:COUNT]
+    _firstList = mas.getValue(firstChar)
+    shuffle(_firstList)
+    firstList = _firstList[0:COUNT]
+    print("length ",len(firstList),"\n\n",COUNT)
     listOfAllBest = []
     for firstElement in firstList:
         kmer = generate_kmer(firstChar,firstElement)
