@@ -161,4 +161,5 @@ def Work(cdr3,calcstart,calcstop,files,mas):
         else:
             print("Unknown way ",TypeOfWork)
             break
+
 preparing()
